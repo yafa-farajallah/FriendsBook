@@ -13,6 +13,12 @@
 			return mysqli_close($this->$conn);
         }
 
+		function GetUser($username,$password){
+			$query ="SELECT * FROM userac where username='$username' and password='$password'";
+			$result =mysqli_query($conn,$query);
+			$user=mysqli_fetch_array($result);
+			return $user;
+		}
 
 	}
 	

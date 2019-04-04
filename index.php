@@ -1,47 +1,8 @@
 <?php
 session_start();
 require('conn.php');
-$db = new MySQL();
-if(isset($_post['register']))
-{
-	$username=$_post['username'];
-	$password=$_post['password'];
-	$firstname=$_post['firstname'];
-	$lastname=$_post['lastname'];
-	$teleno=$_post['teleno'];
-	$email=$_post['email'];
-	$gender=$_post['gender'];
-	$birthdate=$_post['birthdate'];
-	
-	
-	
-	if($gender=='male')
-		$gender=1;
-	else
-		$gender=0;
-	$query ="SELECT userid FROM userac where username='$username' and password='$password'";
-    $result =mysqli_query($conn,$query);
-    $row=mysqli_fetch_array($result);
-    if($row[0]!=null){
-    	header("location:reg.php");
-    	echo "user already exist";
-     }
-     else{
-     	$sql = "INSERT INTO userac (username,password,firstname, lastname,teleno,email,gender,birthdate)
-      VALUES ('$username','$password','$firstname','$lastname','$teleno','$email','$gender','$birthdate')";
-      $_SESSION['username']=$username;
-        if ($conn->query($sql) === TRUE) {
-        echo "New user created successfully";
-         } else {
-         	header("location:reg.php");
-         echo "Error: " . $sql . "<br>" . $conn->error;
-           }
-
-          $conn->close();
-         }
 
 if(isset($_SESSION['userId'])){
-
 
 ?>
 <!DOCTYPE html>
@@ -158,10 +119,7 @@ if(isset($_SESSION['userId'])){
 </div>
 </div>
 
-<?php
 
-   $db->close();
-?>
 
 </body>
 </html>
@@ -169,6 +127,6 @@ if(isset($_SESSION['userId'])){
 <?php
 }
 else{
-	header("location:login.php");
+	header("location:login.php?loginFailed=true");
 }
 ?>

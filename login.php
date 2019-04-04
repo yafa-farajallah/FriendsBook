@@ -29,7 +29,7 @@
 
                 <input type="text" id="login" class="fadeIn second" name="username" placeholder="username" required>
                 <input type="password" id="password" class="fadeIn third" name="password" placeholder="password" required>
-                <input type="submit" class="fadeIn fourth" value="Log In">
+                <input type="submit" class="fadeIn fourth" value="LogIn">
 
                 <?php if(isset($_GET["loginFailed"])):?>
                     <h5 class="myclass">No existing user or Invalid Username or Password</h5>

@@ -2,34 +2,31 @@
 
 
 require('conn.php');
-$db = new DB();
+
 if (isset($_GET['action']))
 {
-	$action=$_GET['action'];
-	DoAction($action);
+	DoAction($_GET['action']);
 }
+
 function DoAction($action)
 {
-   switch( $action )
-   {
+   switch($action)
+   {  global $db;
 	  case 'login':
-	  session_start();
-	  $username = $_POST['username'];
-	  $password = $_POST['password'];
-	  
-	  $query ="SELECT userid FROM userac where username='$username' and password='$password'";
-	  $result =mysqli_query($conn,$query);
-	  $user=mysqli_fetch_array($result);
-	  $id=$user[0];
-	  if (!$user)
-	  {
-		  die(header("location:login.php?loginFailed=true"));
-	  }
-	  
-	  else{
-	  $_SESSION['userId'] = $id;
-		  header("location:index.php");
-	  }
+echo mysql_connect_error();
+		session_start();
+		$username = mysqli_real_escape_string($conn,$_POST['username']);
+		$password = mysqli_real_escape_string($conn,$_POST['password']);
+		$user=$db->GetUser($username,$password);
+		
+		if (!$user)
+		{
+			die(header("location:login.php?loginFailed=true"));
+		}
+		else{
+			$_SESSION['userId'] = $user[0];
+				header("location:index.php");
+			}
 
       case 'register':
 	  session_start();
