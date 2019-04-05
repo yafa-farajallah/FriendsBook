@@ -1,11 +1,11 @@
 html {
-    background-color: #606466;
+    background-color: #56baed;
   }
   
   body {
     font-family: "Poppins", sans-serif;
     height: 100vh;
-     background-color: #606466;
+     background-color: white;
   }
   
   a {
@@ -291,7 +291,7 @@ html {
     display: block;
     width: 40px;
     height: 40px;
-    background-color: rgba(255, 255, 255, 0.15);
+    background-color: rgb(240, 172, 249,0.5); 
     bottom: -160px;
     -webkit-animation: square 20s infinite;
     -moz-animation: square 250s infinite;
