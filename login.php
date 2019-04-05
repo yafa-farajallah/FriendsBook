@@ -20,7 +20,7 @@
     <div class="wrapper wrapper1 fadeInDown">
         <div id="formContent">
 
-            <form action="check.php?action=login" method="post">
+            <form action="index.php?action=login" method="post">
 
                 <div class="login100-form-title" style=" border-radius:10px 10px 0 0 ; background-image: url(images/friends.jpg);">
                     <h1 class="login100-form-title-1">FriendsWorld</h1>
@@ -32,14 +32,20 @@
                 <input type="submit" class="fadeIn fourth" value="LogIn">
 
                 <?php if(isset($_GET["LogInStatus"])){
-                         if ($_GET["LogInStatus"]=='failed')
-                            echo '<h5 class="myclass">No existing user or Invalid Username or Password</h5>';
-                       else
-                       if ($_GET["LogInStatus"]=='confirm')
+                        switch($_GET["LogInStatus"])
+                        { case 'confirm':
                        echo '<h5 class="myclass">Please Confirm Your LogIn With your new account !</h5>';
-                       else
-                       if ($_GET["LogInStatus"]=='notlogin')
-                       echo '<h5 class="myclass">Please LogIn With your account !</h5>';}
+                       break;
+                       case 'failed':
+                            echo '<h5 class="myclass">No existing user or Invalid Username or Password</h5>';
+                       break;
+                       
+                       case 'notlogin':
+                       echo '<h5 class="myclass">Please LogIn With your account !</h5>';
+                       break; 
+                       
+                   }
+               }
                       ?>
 
             </form>
@@ -48,16 +54,16 @@
 
             </div>
             <ul class="colorlib-bubbles">
-                <li>yafa</li>
-                <li>diana</li>
-                <li>yafa</li>
-                <li>diana</li>
-                <li>yafa</li>
-                <li>diana</li>
-                <li>yafa</li>
-                <li>diana</li>
-                <li>yafa</li>
-                <li>diana</li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
+                <li></li>
             </ul>
         </div>
   </div>

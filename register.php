@@ -38,7 +38,7 @@
                 <div class="card-body">
                     <h2 style="color: #de41b0; display: inline-block;" class="title">Register In FriendsWorld</h2><img style="margin-left: 20px;margin-bottom: -5px;" width="30px" height="30px" src="images/caticon.png">
                     <h3 style="color: #de41b0; display: block;" class="subtitle">It's free and anyone can join !</h3>
-                    <form action="check.php?action=register" method="post" >
+                    <form action="index.php?action=register" method="post" >
                     	<div class="row row-space">
                             <div class="col-2">
                                 <div class="input-group">
