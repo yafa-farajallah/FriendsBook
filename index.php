@@ -127,6 +127,6 @@ if(isset($_SESSION['userId'])){
 <?php
 }
 else{
-	header("location:login.php?loginFailed=true");
+	header("location:login.php?loginStatus=notlogin");
 }
 ?>
