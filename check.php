@@ -10,13 +10,14 @@ if (isset($_GET['action']))
 
 function DoAction($action)
 {
+	 $db;
    switch($action)
-   {  global $db;
+   {  
 	  case 'login':
 echo mysql_connect_error();
 		session_start();
-		$username = mysqli_real_escape_string($conn,$_POST['username']);
-		$password = mysqli_real_escape_string($conn,$_POST['password']);
+		$username = ($_POST['username']);
+		$password = ($_POST['password']);
 		$user=$db->GetUser($username,$password);
 		
 		if (!$user)
