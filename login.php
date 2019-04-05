@@ -31,9 +31,16 @@
                 <input type="password" id="password" class="fadeIn third" name="password" placeholder="password" required>
                 <input type="submit" class="fadeIn fourth" value="LogIn">
 
-                <?php if(isset($_GET["loginFailed"])):?>
-                    <h5 class="myclass">No existing user or Invalid Username or Password</h5>
-                    <?php endif; ?>
+                <?php if(isset($_GET["LogInStatus"])){
+                         if ($_GET["LogInStatus"]=='failed')
+                            echo '<h5 class="myclass">No existing user or Invalid Username or Password</h5>';
+                       else
+                       if ($_GET["LogInStatus"]=='confirm')
+                       echo '<h5 class="myclass">Please Confirm Your LogIn With your new account !</h5>';
+                       else
+                       if ($_GET["LogInStatus"]=='notlogin')
+                       echo '<h5 class="myclass">Please LogIn With your account !</h5>';}
+                      ?>
 
             </form>
             <div id="formFooter">
