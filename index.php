@@ -55,6 +55,16 @@ function DoAction($action)
       }
       break;
       }
+
+    case 'logout':{
+      session_start();
+
+      if(isset($_SESSION['userId']))
+        unset($_SESSION['userId']);
+
+      header("location:login.php");
+              break;
+    }
   }
 }
 session_start();
@@ -92,7 +102,7 @@ if(isset($_SESSION['userId'])){
     
       <ul class="nav navbar-nav navbar-right">
         <li><img src="images/whiteicon.png" style="margin-top: 12px;"></li>
-        <li><a a style="color: white;"href="logout.php">log out</a></li>
+        <li><a a style="color: white;"href="index.php?action=logout">log out</a></li>
         
       </ul>
     </div><!-- /.navbar-collapse -->
