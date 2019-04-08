@@ -97,7 +97,8 @@ if(isset($_SESSION['userId'])){
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div  class="collapse navbar-collapse " id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-      <li ><a style="color: white;"href="index.php"><?php echo $firstName." ".$lastName ?></a></li>
+        <li ><a style="color: white; padding-right: 0px;"href="index.php"><?php echo $firstName." ".$lastName ?></a></li>
+        <li><img src="images/whiteicon.png" style="margin-top: 12px;"></li>
         <li ><a style="color: white;" href="#">My Profile<span class="sr-only">(current)</span></a></li>
         <li ><a style="color: white;"href="index.php">Home Page</a></li>
         
@@ -106,7 +107,7 @@ if(isset($_SESSION['userId'])){
     
       <ul class="nav navbar-nav navbar-right">
         <li><img src="images/whiteicon.png" style="margin-top: 12px;"></li>
-        <li><a a style="color: white;"href="index.php?action=logout">log out</a></li>
+        <li><a a style="color: white;"href="index.php?action=logout">logout</a></li>
         
       </ul>
     </div><!-- /.navbar-collapse -->
@@ -114,7 +115,7 @@ if(isset($_SESSION['userId'])){
 </nav>
 	<div class="container">
 <div class="row">
-<div class="col-md-10 col-sm-12 pull-left posttimeline">
+<div class="col-md-9 col-sm-12 pull-left posttimeline">
         <div class="panel panel-default">
           <div class="panel-body">
             <div class="status-upload nopaddingbtm">
@@ -174,14 +175,34 @@ if(isset($_SESSION['userId'])){
 </div>
 
 
- <div class="col-md-2 col-sm-12 pull-right">
+ <div class="col-md-3 col-sm-12 pull-right">
         <div class="panel panel-default">
           <div class="panel-heading">
             <p class="page-subtitle small"><b>people you may know</b></p>
           </div>
           
-          <div class="clearfix">diana mujahed</div>
-          <div class="clearfix">deema mujahed</div>
+          <?php
+            $friends=$db->SelectData("SELECT userId2 FROM friendship where userId =1");
+            if (!$friends)
+            {
+              $notFriends=$db->SelectData("SELECT firstName,lastName FROM userac");
+                while($notFriend = mysqli_fetch_array($notFriends))
+                    echo '<div style="margin-bottom: 10px;" class="clearfix">' . $notFriend[0].' '.$notFriend[1].'<button  style=
+                    " margin-left: 10px; background-color: #de41b0; color:white; float:right;" class="btn btn--radius-2 btn--blue"
+                     type="submit" name="addFriends">Add Friends</button></div>';
+            }
+            else {
+            while ($friend=mysqli_fetch_array($friends)){
+                $friendId=$friend[0];
+                $notFriends=$db->SelectData("SELECT firstName,lastName FROM userac where userId != $friendId");
+                while($notFriend = mysqli_fetch_array($notFriends))
+                    echo '<div style="margin-bottom: 10px;" class="clearfix"> <b style="color: #de41b0;">' . $notFriend[0].' '.$notFriend[1].'</b><button  style=
+                    " margin-left: 10px; background-color: #de41b0; color:white; float:right;" class="btn btn--radius-2 btn--blue"
+                     type="submit" name="addFriends">Add Friends</button></div>';
+            }
+          }
+          ?>
+        
 
         </div>
         </div>
