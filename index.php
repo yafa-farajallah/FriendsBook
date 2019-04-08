@@ -178,7 +178,8 @@ if(isset($_SESSION['userId'])){
  <div class="col-md-3 col-sm-12 pull-right">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <p class="page-subtitle small"><b>people you may know</b></p>
+            <p class="page-subtitle small"><b>people you may know at FriendsWorld </b>
+            <img src="images/caticon.png" ></p>
           </div>
           
           <?php
