@@ -183,25 +183,15 @@ if(isset($_SESSION['userId'])){
           </div>
           
           <?php
-            $friends=$db->SelectData("SELECT userId2 FROM friendship where userId =1");
-            if (!$friends)
-            {
-              $notFriends=$db->SelectData("SELECT firstName,lastName FROM userac");
-                while($notFriend = mysqli_fetch_array($notFriends))
-                    echo '<div style="margin-bottom: 10px;" class="clearfix">' . $notFriend[0].' '.$notFriend[1].'<button  style=
-                    " margin-left: 10px; background-color: #de41b0; color:white; float:right;" class="btn btn--radius-2 btn--blue"
-                     type="submit" name="addFriends">Add Friends</button></div>';
-            }
-            else {
-            while ($friend=mysqli_fetch_array($friends)){
-                $friendId=$friend[0];
-                $notFriends=$db->SelectData("SELECT firstName,lastName FROM userac where userId != $friendId");
-                while($notFriend = mysqli_fetch_array($notFriends))
+          $userid=$_SESSION['userId'];
+            $notfriends=$db->SelectData("SELECT firstName,lastName FROM userac where userId not in (SELECT userId2 FROM friendship where userId =$userid)");
+               
+                while($notFriend = mysqli_fetch_array($notfriends))
+                {
                     echo '<div style="margin-bottom: 10px;" class="clearfix"> <b style="color: #de41b0;">' . $notFriend[0].' '.$notFriend[1].'</b><button  style=
                     " margin-left: 10px; background-color: #de41b0; color:white; float:right;" class="btn btn--radius-2 btn--blue"
                      type="submit" name="addFriends">Add Friends</button></div>';
-            }
-          }
+         }
           ?>
         
 
