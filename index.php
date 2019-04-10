@@ -55,29 +55,41 @@ function DoAction($action)
       }
       break;
       }
+
+    case 'logout':{
+      session_start();
+
+      if(isset($_SESSION['userId']))
+        unset($_SESSION['userId']);
+
+      header("location:login.php");
+              break;
+    }
   }
 }
 session_start();
 if(isset($_SESSION['userId'])){
-
+  $id=$_SESSION['userId'];
+  $query ="SELECT * FROM userac where userId=$id";
+  $result=$db->SelectData($query);
+  $user=mysqli_fetch_array($result);
+  $firstName=$user[3];
+  $lastName=$user[4];
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-	<title></title>
+	<title>FriendsWorld</title>
 	<link rel="icon" href="images/caticon.png">
 	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-<!------ Include the above in your HEAD tag ---------->
-
-
-<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
-<link href="css/index.css" rel="stylesheet" media="all">
-</head>
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
+  <link href="css/index.css" rel="stylesheet" media="all">
+  </head>
 <body>
 
-	<!--<h1> Welcome <?php echo $_SESSION['username'] ?></h1>-->
+	
 	<nav class=" navbar navbar-default pink">
   <div  class="container-fluid ">
     
@@ -85,14 +97,17 @@ if(isset($_SESSION['userId'])){
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div  class="collapse navbar-collapse " id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li ><a style="color: white;" href="#">profile<span class="sr-only">(current)</span></a></li>
-        <li ><a a style="color: white;"href="index.php">home</a></li>
+        <li ><a style="color: white; padding-right: 0px;"href="index.php"><?php echo $firstName." ".$lastName ?></a></li>
+        <li><img src="images/whiteicon.png" style="margin-top: 12px;"></li>
+        <li ><a style="color: white;" href="#">My Profile<span class="sr-only">(current)</span></a></li>
+        <li ><a style="color: white;"href="index.php">Home Page</a></li>
+        
         
       </ul>
     
       <ul class="nav navbar-nav navbar-right">
         <li><img src="images/whiteicon.png" style="margin-top: 12px;"></li>
-        <li><a a style="color: white;"href="logout.php">log out</a></li>
+        <li><a a style="color: white;"href="index.php?action=logout">logout</a></li>
         
       </ul>
     </div><!-- /.navbar-collapse -->
@@ -100,7 +115,7 @@ if(isset($_SESSION['userId'])){
 </nav>
 	<div class="container">
 <div class="row">
-<div class="col-md-10 col-sm-12 pull-left posttimeline">
+<div class="col-md-9 col-sm-12 pull-left posttimeline">
         <div class="panel panel-default">
           <div class="panel-body">
             <div class="status-upload nopaddingbtm">
@@ -160,14 +175,35 @@ if(isset($_SESSION['userId'])){
 </div>
 
 
- <div class="col-md-2 col-sm-12 pull-right">
+ <div class="col-md-3 col-sm-12 pull-right">
         <div class="panel panel-default">
           <div class="panel-heading">
-            <p class="page-subtitle small"><b>people you may know</b></p>
+            <p class="page-subtitle small"><b>people you may know at FriendsWorld </b>
+            <img src="images/caticon.png" ></p>
           </div>
           
-          <div class="clearfix">diana mujahed</div>
-          <div class="clearfix">deema mujahed</div>
+          <?php
+            $friends=$db->SelectData("SELECT userId2 FROM friendship where userId =1");
+            if (!$friends)
+            {
+              $notFriends=$db->SelectData("SELECT firstName,lastName FROM userac");
+                while($notFriend = mysqli_fetch_array($notFriends))
+                    echo '<div style="margin-bottom: 10px;" class="clearfix">' . $notFriend[0].' '.$notFriend[1].'<button  style=
+                    " margin-left: 10px; background-color: #de41b0; color:white; float:right;" class="btn btn--radius-2 btn--blue"
+                     type="submit" name="addFriends">Add Friends</button></div>';
+            }
+            else {
+            while ($friend=mysqli_fetch_array($friends)){
+                $friendId=$friend[0];
+                $notFriends=$db->SelectData("SELECT firstName,lastName FROM userac where userId != $friendId");
+                while($notFriend = mysqli_fetch_array($notFriends))
+                    echo '<div style="margin-bottom: 10px;" class="clearfix"> <b style="color: #de41b0;">' . $notFriend[0].' '.$notFriend[1].'</b><button  style=
+                    " margin-left: 10px; background-color: #de41b0; color:white; float:right;" class="btn btn--radius-2 btn--blue"
+                     type="submit" name="addFriends">Add Friends</button></div>';
+            }
+          }
+          ?>
+        
 
         </div>
         </div>
