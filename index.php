@@ -99,7 +99,6 @@ if(isset($_SESSION['userId'])){
       <ul class="nav navbar-nav">
         <li ><a style="color: white; padding-right: 0px;"href="index.php"><?php echo $firstName." ".$lastName ?></a></li>
         <li><img src="images/whiteicon.png" style="margin-top: 12px;"></li>
-        <li ><a style="color: white;" href="#">My Profile<span class="sr-only">(current)</span></a></li>
         <li ><a style="color: white;"href="index.php">Home Page</a></li>
         
         

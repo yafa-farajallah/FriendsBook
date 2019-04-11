@@ -12,4 +12,4 @@ echo mysqli_error($connection);
 foreach ($result as  $row) {
 echo $row['postText']. "<br>";
 }
-        ?>
+?>
