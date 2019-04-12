@@ -97,9 +97,9 @@ if(isset($_SESSION['userId'])){
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div  class="collapse navbar-collapse " id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
+        <li><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="media-object"></li>
         <li ><a style="color: white; padding-right: 0px;"href="index.php"><?php echo $firstName." ".$lastName ?></a></li>
-        <li><img src="images/whiteicon.png" style="margin-top: 12px;"></li>
-        <li ><a style="color: white;"href="index.php">Home Page</a></li>
+        <li ><a style="color: white;margin-left: 20px;"href="index.php">Home Page</a></li>
         
         
       </ul>
@@ -131,7 +131,18 @@ if(isset($_SESSION['userId'])){
             <!-- Status Upload  --> 
           </div>
         </div>
-        
+ <?php 
+ 
+ $userid=$_SESSION['userId'];
+ $qurey="SELECT * FROM posts WHERE userid=$userid 
+or userid  in ( SELECT USERID2 FROM FRIENDSHIP WHERE USERID=$userid) 
+or userid  in ( SELECT USERID FROM FRIENDSHIP WHERE USERID2=$userid)
+order by datetimecurrent DESC";
+$posts=$db->SelectData($qurey);
+ 
+?>
+<?php if($posts): ?>
+<?php foreach($posts as  $row):?>
         <div class="panel panel-default">
           <div class="btn-group pull-right postbtn">
             <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
@@ -144,12 +155,21 @@ if(isset($_SESSION['userId'])){
             <div class="media">
               <div class="media-left"> <a href="javascript:void(0)"> <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="media-object"> </a> </div>
               <div class="media-body">
-                <h4 class="media-heading"> Lucky Sans<br>
-                  <small><i class="fa fa-clock-o"></i> Yesterday, 2:00 am</small> </h4>
-                <p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante sollicitudin commodo. Cras purus odio. </p>
+                <?php $result=$db->SelectData("SELECT firstName,lastName FROM userac WHERE userId=".$row['userId']);
+                $name=mysqli_fetch_assoc($result);
+                 ?>
+                <h4 class="media-heading"> <?php echo $name['firstName']." ".$name['lastName'] ; ?> <br>
+                  <small><i class="fa fa-clock-o"></i> <?php echo $row['dateTimeCurrent']; ?> </small> </h4>
+                <p><?php echo $row['postText']; ?> </p>
+                <?php  
+                 $result=$db->SelectData("SELECT COUNT(likeId)  FROM likes WHERE postId=".$row['postId']);
+                $Nlikes=mysqli_fetch_assoc($result);
+                 $result=$db->SelectData("SELECT COUNT(commentId)  FROM comments WHERE postId=".$row['postId']);
+                $Ncomments=mysqli_fetch_assoc($result);
+                ?>
                 <ul class="nav nav-pills pull-left ">
-                  <li><a style="color: #de41b0;"  href="" title=""><i style="color: #de41b0;" class="glyphicon glyphicon-thumbs-up"></i> 2015</a></li>
-                  <li><a style="color: #de41b0;" href="" title=""><i style="color: #de41b0;"  class=" glyphicon glyphicon-comment"></i> 25</a></li>
+                  <li><a style="color: #de41b0;"  href="" title=""><i style="color: #de41b0;" class="glyphicon glyphicon-thumbs-up"></i> <?php echo $Nlikes['COUNT(likeId)']; ?></a></li>
+                  <li><a style="color: #de41b0;" href="" title=""><i style="color: #de41b0;"  class=" glyphicon glyphicon-comment"></i><?php echo $Ncomments['COUNT(commentId)']; ?></a></li>
                   
                 </ul>
               </div>
@@ -157,6 +177,7 @@ if(isset($_SESSION['userId'])){
           </div>
           <div class=" panel-body col-md-12 border-top">
             <div class=" status-upload nopaddingbtm status-upload">
+
               <form>
                 <label style="color: #de41b0;" >Comment</label>
                 <textarea class="form-control" placeholder="Comment here"></textarea>
@@ -169,8 +190,8 @@ if(isset($_SESSION['userId'])){
             
           </div>
         </div>
-
-
+<?php endforeach; ?>
+<?php endif ;?>
 </div>
 
 
@@ -187,9 +208,9 @@ if(isset($_SESSION['userId'])){
                
                 while($notFriend = mysqli_fetch_array($notfriends))
                 {
-                    echo '<div style="margin-bottom: 10px;" class="clearfix"> <b style="color: #de41b0;">' . $notFriend[0].' '.$notFriend[1].'</b><button  style=
-                    " margin-left: 10px; background-color: #de41b0; color:white; float:right;" class="btn btn--radius-2 btn--blue"
-                     type="submit" name="addFriends">Add Friends</button></div>';
+                    echo '<div style="margin-bottom: 10px;margin-top: 3px;margin-left: 10px;" class="clearfix"> <b style="color: black;">' . $notFriend[0].' '.$notFriend[1].'</b><button  style=
+                    " margin-left: 10px;margin-right: 10px; background-color: #de41b0; color:white; float:right;" class="btn btn--radius-2 btn--blue"
+                     type="submit" name="addFriends">Add Friend</button></div>';
          }
           ?>
         
