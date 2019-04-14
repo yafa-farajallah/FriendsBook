@@ -200,9 +200,9 @@ $posts=$db->SelectData($qurey);
                         <?php $result=$db->SelectData("SELECT firstName,lastName FROM userac WHERE userId=".$comment['userId']);
                           $name=mysqli_fetch_assoc($result);
                         ?>
-                        <div class="comment_element" style="color: #de41b0; font-size:16px;"><?php echo $name['firstName']." ".$name['lastName'] ; ?></div>
-                        <div class="comment_element" style=" font-size:15px;"><?php echo $comment['CommentText']; ?></div>
-                        <div class="comment_date" style=" font-size:10px;"><?php echo $comment['dateCurrent']; ?> </div>
+                        <div class="commenter" style="color: #de41b0; font-size:16px;"><?php echo $name['firstName']." ".$name['lastName'] ; ?></div>
+                        <div class="" style=" font-size:15px;"><?php echo $comment['CommentText']; ?></div>
+                        <div class="date" style=" font-size:10px;"><?php echo $comment['dateCurrent']; ?> </div>
                       </div>
                 <?php endforeach; ?>
             </div>
