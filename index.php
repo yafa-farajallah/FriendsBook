@@ -140,9 +140,8 @@ or userid  in ( SELECT USERID FROM FRIENDSHIP WHERE USERID2=$userid)
 order by datetimecurrent DESC";
 $posts=$db->SelectData($qurey);
  
-?>
-<?php if($posts): ?>
-<?php foreach($posts as  $row):?>
+ if($posts)
+  foreach($posts as  $row):?>
         <div class="panel panel-default">
           <div class="btn-group pull-right postbtn">
             <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
@@ -178,20 +177,40 @@ $posts=$db->SelectData($qurey);
           <div class=" panel-body col-md-12 border-top">
             <div class=" status-upload nopaddingbtm status-upload">
 
-              <form>
-                <label style="color: #de41b0;" >Comment</label>
-                <textarea class="form-control" placeholder="Comment here"></textarea>
-                <br>
-                
-                <button  style="background-color:  #de41b0;border-color:#de41b0;" type="submit" class="btn btn-success pull-right"> Comment</button>
+              
+              <form action="comment.php?postId=<?php echo $row['postId']; ?>" method="post">
+                  <label style="color: #de41b0;" >Comment</label>
+                  <textarea name="commentText" class="form-control" placeholder="Comment here"></textarea>
+                  <br>
+                  
+                  <button name="comment" style="background-color:  #de41b0;border-color:#de41b0;" type="submit" class="btn btn-success pull-right"> Comment</button>
+                <br><br>
               </form>
+                <?php 
+ 
+                    $postId=$row['postId'];
+                    $qurey="SELECT * FROM comments WHERE postid=$postId order by dateCurrent DESC";
+                    $comments=$db->SelectData($qurey);
+                    
+                    if($comments)
+                      foreach($comments as  $comment):?>
+                      <div class="comment">
+                        <div class=""><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="media-object" width="30px"></div>
+
+                        <?php $result=$db->SelectData("SELECT firstName,lastName FROM userac WHERE userId=".$comment['userId']);
+                          $name=mysqli_fetch_assoc($result);
+                        ?>
+                        <div class="comment_element" style="color: #de41b0; font-size:16px;"><?php echo $name['firstName']." ".$name['lastName'] ; ?></div>
+                        <div class="comment_element" style=" font-size:15px;"><?php echo $comment['CommentText']; ?></div>
+                        <div class="comment_date" style=" font-size:10px;"><?php echo $comment['dateCurrent']; ?> </div>
+                      </div>
+                <?php endforeach; ?>
             </div>
             <!-- Status Upload  --> 
             
           </div>
         </div>
 <?php endforeach; ?>
-<?php endif ;?>
 </div>
 
 
@@ -220,8 +239,6 @@ $posts=$db->SelectData($qurey);
 	
 </div>
 </div>
-
-
 
 </body>
 </html>
