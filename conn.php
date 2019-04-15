@@ -39,7 +39,8 @@
 			  $this->err = $this->conn->error;
 			  return FALSE;
 			}
-		  }
+		}
+
 }
 	
 	$db = new DB();

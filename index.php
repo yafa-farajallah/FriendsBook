@@ -167,7 +167,7 @@ $posts=$db->SelectData($qurey);
                 $Ncomments=mysqli_fetch_assoc($result);
                 ?>
                 <ul class="nav nav-pills pull-left ">
-                  <li><a style="color: #de41b0;"  href="" title=""><i style="color: #de41b0;" class="glyphicon glyphicon-thumbs-up"></i> <?php echo $Nlikes['COUNT(likeId)']; ?></a></li>
+                  <li><a id="like" style="color: #de41b0;"  href="" title=""><i style="color: #de41b0;" class="glyphicon glyphicon-thumbs-up"></i> <?php echo $Nlikes['COUNT(likeId)']; ?></a></li>
                   <li><a style="color: #de41b0;" href="" title=""><i style="color: #de41b0;"  class=" glyphicon glyphicon-comment"></i><?php echo $Ncomments['COUNT(commentId)']; ?></a></li>
                   
                 </ul>
@@ -239,7 +239,27 @@ $posts=$db->SelectData($qurey);
 	
 </div>
 </div>
+<?php
 
+?>
+<script type="text/javascript">
+
+function add_like()
+{
+    jQuery.ajax({
+        type: "POST",
+        url: "like.php?postid=<?php echo $row['postId'];?> ",
+        data: {functionname: 'addlike'}, 
+         success:function(data) {
+        alert(data); 
+         }
+    });
+}
+$(document).ready(function() {
+    $("#like").click(function() { add_like(); });
+});
+
+  </script>
 </body>
 </html>
 
