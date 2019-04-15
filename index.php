@@ -165,9 +165,10 @@ $posts=$db->SelectData($qurey);
                 $Nlikes=mysqli_fetch_assoc($result);
                  $result=$db->SelectData("SELECT COUNT(commentId)  FROM comments WHERE postId=".$row['postId']);
                 $Ncomments=mysqli_fetch_assoc($result);
+                $postId=$row['postId'];
                 ?>
                 <ul class="nav nav-pills pull-left ">
-                  <li><a id="like" style="color: #de41b0;"  href="" title=""><i style="color: #de41b0;" class="glyphicon glyphicon-thumbs-up"></i> <?php echo $Nlikes['COUNT(likeId)']; ?></a></li>
+                  <li><a id="like" style="color: #de41b0;"  href="like.php?postid=<?php echo $postId ?>" title=""><i style="color: #de41b0;" class="glyphicon glyphicon-thumbs-up"></i> <?php echo $Nlikes['COUNT(likeId)']; ?></a></li>
                   <li><a style="color: #de41b0;" href="" title=""><i style="color: #de41b0;"  class=" glyphicon glyphicon-comment"></i><?php echo $Ncomments['COUNT(commentId)']; ?></a></li>
                   
                 </ul>
@@ -188,7 +189,7 @@ $posts=$db->SelectData($qurey);
               </form>
                 <?php 
  
-                    $postId=$row['postId'];
+                    
                     $qurey="SELECT * FROM comments WHERE postid=$postId order by dateCurrent DESC";
                     $comments=$db->SelectData($qurey);
                     
@@ -248,10 +249,10 @@ function add_like()
 {
     jQuery.ajax({
         type: "POST",
-        url: "like.php?postid=<?php echo $row['postId'];?> ",
+        url: "like.php?postid=<?php echo $postId;?> ",
         data: {functionname: 'addlike'}, 
          success:function(data) {
-        alert(data); 
+        //alert(data); 
          }
     });
 }
