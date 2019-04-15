@@ -195,16 +195,16 @@ $posts=$db->SelectData($qurey);
                     if($comments)
                       foreach($comments as  $comment):?>
                       <div class="comment">
-                        <div class=""><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="media-object" width="30px"></div>
-
                         <?php $result=$db->SelectData("SELECT firstName,lastName FROM userac WHERE userId=".$comment['userId']);
                           $name=mysqli_fetch_assoc($result);
                         ?>
-                        <div class="commenter" style="color: #de41b0; font-size:16px;"><?php echo $name['firstName']." ".$name['lastName'] ; ?></div>
+                        <div class="commenter"><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="media-object" width="30px"></div>
+                        <div  class="commenter"  style="color: #de41b0; font-size:17px; "><?php echo $name['firstName']." ".$name['lastName'] ; ?></div>
+                       
                         <div class="" style=" font-size:15px;"><?php echo $comment['CommentText']; ?></div>
                         <div class="date" style=" font-size:10px;"><?php echo $comment['dateCurrent']; ?> </div>
                       </div>
-                <?php endforeach; ?>
+                      <?php endforeach; ?>
             </div>
             <!-- Status Upload  --> 
             
