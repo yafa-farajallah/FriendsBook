@@ -80,6 +80,7 @@ if(isset($_SESSION['userId'])){
 <html>
 <head>
 	<title>FriendsWorld</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 	<link rel="icon" href="images/caticon.png">
 	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
@@ -168,7 +169,7 @@ $posts=$db->SelectData($qurey);
                 $postId=$row['postId'];
                 ?>
                 <ul class="nav nav-pills pull-left ">
-                  <li><a id="like" style="color: #de41b0;"  href="like.php?postid=<?php echo $postId ?>" title=""><i style="color: #de41b0;" class="glyphicon glyphicon-thumbs-up"></i> <?php echo $Nlikes['COUNT(likeId)']; ?></a></li>
+                  <li><a class="LIKES" id="<?php echo $postId; ?>" style="color: #de41b0;"  href="" title=""><i style="color: #de41b0;" class="glyphicon glyphicon-thumbs-up"></i> <?php echo $Nlikes['COUNT(likeId)']; ?></a></li>
                   <li><a style="color: #de41b0;" href="" title=""><i style="color: #de41b0;"  class=" glyphicon glyphicon-comment"></i><?php echo $Ncomments['COUNT(commentId)']; ?></a></li>
                   
                 </ul>
@@ -224,15 +225,19 @@ $posts=$db->SelectData($qurey);
           
           <?php
           $userid=$_SESSION['userId'];
-            $notfriends=$db->SelectData("SELECT firstName,lastName FROM userac where userId not in (SELECT userId2 FROM friendship where userId =$userid)");
-               
-                while($notFriend = mysqli_fetch_array($notfriends))
-                {
-                    echo '<div style="margin-bottom: 10px;margin-top: 3px;margin-left: 10px;" class="clearfix"> <b style="color: black;">' . $notFriend[0].' '.$notFriend[1].'</b><button  style=
-                    " margin-left: 10px;margin-right: 10px; background-color: #de41b0; color:white; float:right;" class="btn btn--radius-2 btn--blue"
-                     type="submit" name="addFriends">Add Friend</button></div>';
-         }
-          ?>
+            $notfriends=$db->SelectData("SELECT userId,firstName,lastName FROM userac where userId not in (SELECT userId2 FROM friendship where userId =$userid)");
+            foreach($notfriends as $notFriend):?>
+                
+                   <div style="margin-bottom: 10px;margin-top: 3px;margin-left: 10px;" 
+                    class="clearfix"> <b style="color: black;"><?php echo $notFriend['firstName']." ".$notFriend['lastName'] ; ?> </b>
+                    <button  id="<?php echo $notFriend['userId']; ?>"
+                    class="btn btn--radius-2 btn--blue addfriend" style=" margin-left: 10px;
+  margin-right: 10px;
+  background-color: #de41b0;
+  color:white; 
+  float:right;"
+                     type="submit" name="addFriends">Add Friend</button></div>
+         <?php endforeach; ?>
         
 
         </div>
@@ -245,19 +250,48 @@ $posts=$db->SelectData($qurey);
 ?>
 <script type="text/javascript">
 
-function add_like()
+function add_like(postId)
 {
     jQuery.ajax({
-        type: "POST",
-        url: "like.php?postid=<?php echo $postId;?> ",
-        data: {functionname: 'addlike'}, 
+        type: "GET",
+        url: "like.php?postid="+postId,
+        data:
+         {functionname: 'addlike'}, 
          success:function(data) {
         //alert(data); 
          }
     });
 }
 $(document).ready(function() {
-    $("#like").click(function() { add_like(); });
+
+    $(".LIKES").click(function(event) {
+      //event.preventDefault();
+      var postId=$(this).attr('id');
+       add_like(postId); 
+      //return false;
+       });
+});
+
+function add_friends(friendId)
+{
+    jQuery.ajax({
+        type: "GET",
+        url: "addfriends.php?friendid="+friendId,
+        data:
+         {functionname: 'addfriends'}, 
+         success:function(data) {
+        //alert(data); 
+         }
+    });
+}
+$(document).ready(function() {
+
+    $(".addfriend").click(function(event) {
+      //event.preventDefault();
+      var friendId=$(this).attr('id');
+       add_friends(friendId); 
+      //return false;
+       });
 });
 
   </script>

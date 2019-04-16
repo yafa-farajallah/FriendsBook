@@ -17,5 +17,6 @@ $del=$db->InsertData($query2);
 else
 $add=$db->InsertData($query3);
 
-header("location:index.php");
- ?>
+//echo "success";
+
+?>
