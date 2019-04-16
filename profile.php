@@ -1,103 +1,45 @@
+<!DOCTYPE html>
+<html>
 <?php
 require('conn.php');
-if (isset($_GET['action']))
-{
-  DoAction($_GET['action']);
-}
-
-function DoAction($action)
-{  global $db;
-   $connection=$db->conn;
-    switch($action)
-   {  
-    case 'login':{
-    session_start();
-    $username = $connection->real_escape_string($_POST['username']);
-    $password = $connection->real_escape_string($_POST['password']);
-    $query ="SELECT userId FROM userac where username='$username' and password='$password'";
-    $result=$db->SelectData($query);
-    $user=mysqli_fetch_array($result);
-
-    if ($user)
-    {
-      $_SESSION['userId'] = $user[0];
-        header("location:index.php");
-    }
-    else{
-      die(header("location:login.php?LogInStatus=failed"));
-    
-      }
-      break;
-    }
-
-    case 'register':{ 
-      $username=$connection->real_escape_string($_POST['username']);
-      $password=$connection->real_escape_string($_POST['password']);
-      $firstname=$connection->real_escape_string($_POST['firstname']);
-      $lastname=$connection->real_escape_string($_POST['lastname']);
-      $teleno=$connection->real_escape_string($_POST['teleno']);
-      $email=$connection->real_escape_string($_POST['email']);
-      $gender=$connection->real_escape_string($_POST['gender']);
-      $birthdate=$connection->real_escape_string($_POST['birthdate']);
-      
-      $query = "SELECT userId FROM userac WHERE username='$username'";
-      $result=$db->SelectData($query);
-        $user=mysqli_fetch_array($result);
-      
-      if ($user) { // if user exists
-        header("location:register.php?RegisterFailed=true");
-      }
-      else {
-      $query = "INSERT INTO userac (username,password,firstname, lastname,teleno,email,gender,birthdate)
-        VALUES ('$username','$password','$firstname','$lastname','$teleno','$email',$gender,'$birthdate')";
-      if ($db->InsertData($query))
-      header('location:login.php?LogInStatus=confirm');
-      }
-      break;
-      }
-
-    case 'logout':{
-      session_start();
-
-      if(isset($_SESSION['userId']))
-        unset($_SESSION['userId']);
-
-      header("location:login.php");
-              break;
-    }
-  }
-}
 session_start();
 if(isset($_SESSION['userId'])){
   $id=$_SESSION['userId'];
   $query ="SELECT * FROM userac where userId=$id";
   $result=$db->SelectData($query);
   $user=mysqli_fetch_array($result);
+  $username=$user[1];
   $firstName=$user[3];
   $lastName=$user[4];
+  $teleNo=$user[5];
+  $email=$user[6];
+  if($user[7]==1)
+    $gender="Male";
+  else
+    $gender="Female";
+  $birthdate=$user[9];
+  
+
 ?>
-<!DOCTYPE html>
-<html>
 <head>
-	<title>FriendsWorld</title>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<link rel="icon" href="images/caticon.png">
-	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
-  <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-  <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+  <title>My Profile</title>
+<link href="css/profile.css" rel="stylesheet">
+<link rel="icon" href="images/caticon.png">
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
   <link href="css/index.css" rel="stylesheet" media="all">
-  </head>
+</head>
 <body>
-
-	
-	<nav class=" navbar navbar-default ">
+  <nav class=" navbar navbar-default ">
   <div  class="container-fluid ">
     
 
     <!-- Collect the nav links, forms, and other content for toggling -->
-    <div  class="collapse navbar-collapse navbar-fixed-top pink " id="bs-example-navbar-collapse-1">
-      <ul class="nav navbar-nav">
+    <div  class="collapse navbar-collapse navbar-fixed-top pink" id="bs-example-navbar-collapse-1" >
+      <ul class="nav navbar-nav ">
         <li><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="media-object"></li>
         <li ><a style="color: white; padding-right: 0px;"href="profile.php"><?php echo $firstName." ".$lastName ?></a></li>
         <li ><a style="color: white;margin-left: 20px;"href="index.php">Home Page</a></li>
@@ -113,9 +55,101 @@ if(isset($_SESSION['userId'])){
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
-	<div class="container">
+<div class="container">
 <div class="row">
-<div class="col-md-9 col-sm-12 pull-left posttimeline">
+      <div class="col-md-12 text-center ">
+        <div class="panel panel-default">
+          <div class="userprofile social ">
+            <div class="userpic"> <img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="" class="userpicimg"> </div>
+            <h3 class="username"><?php echo $firstName." ".$lastName ?></h3>
+           
+            <p><?php echo $username ?></p>
+            <div class="socials tex-center"> <a href="" class="btn btn-circle btn-primary ">
+            <i class="fa fa-facebook"></i></a> <a href="" class="btn btn-circle btn-danger ">
+            <i class="fa fa-google-plus"></i></a> <a href="" class="btn btn-circle btn-info ">
+            <i class="fa fa-twitter"></i></a> <a href="" class="btn btn-circle btn-warning "><i class="fa fa-envelope"></i></a>
+            </div>
+          </div>
+          <div class="col-md-12 border-top border-bottom">
+            <ul class="nav nav-pills pull-left countlist" role="tablist">
+              <li role="presentation">
+              <?php   $userid=$_SESSION['userId'];
+             $qurey="SELECT COUNT(userId) FROM userac WHERE  userid  in ( SELECT USERID2 FROM FRIENDSHIP WHERE USERID=$userid) 
+              or userid  in ( SELECT USERID FROM FRIENDSHIP WHERE USERID2=$userid) ";
+              $friends=$db->SelectData($qurey);
+ 
+            if($friends)
+             $friendsA=mysqli_fetch_assoc($friends);
+            ?>
+                <h3><?php echo $friendsA['COUNT(userId)']; ?><br>
+                  <small>Friends</small> </h3>
+              </li>
+              <li role="presentation">
+                <?php   $userid=$_SESSION['userId'];
+             $qurey="SELECT COUNT(postId) FROM posts WHERE userid=$userid ";
+              $posts=$db->SelectData($qurey);
+ 
+            if($posts)
+             $PostsA=mysqli_fetch_assoc($posts);
+            ?>
+                <h3><?php echo $PostsA['COUNT(postId)']; ?><br>
+                  <small>Posts</small> </h3>
+              </li>
+              
+            </ul>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+      <!-- /.col-md-12 -->
+      <div class="col-md-4 col-sm-12 pull-right">
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h1 class="page-header small">Personal Details</h1>
+            <p class="page-subtitle small"><?php echo $teleNo ; ?></p>
+            <p class="page-subtitle small"><?php echo $email ; ?></p>
+            <p class="page-subtitle small"><?php echo $gender ; ?></p>
+            <p class="page-subtitle small"><?php echo "Born in ".$birthdate ; ?></p>
+          </div>
+          <div class="col-md-12 photolist ">
+            <div class="row">
+              <h4 class="page-header small " style="position: relative;line-height: 22px; font-weight: 400;
+              font-size: 20px;color: #607D8B;margin-left: 10px;">My Pictures</h4>
+              <!-- when we know how to store pics in db we will select pics from db -->
+              <div class="col-sm-3 col-xs-3"><img src="images/flower.jpg" class="" alt=""> </div>
+              <div class="col-sm-3 col-xs-3"><img src="images/flower2.jpg" class="" alt=""> </div>
+              <div class="col-sm-3 col-xs-3"><img src="images/flower3.jpg" class="" alt=""> </div>
+              <div class="col-sm-3 col-xs-3"><img src="images/flower4.jpg" class="" alt=""> </div>
+            </div>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+        
+       
+        <div class="panel panel-default">
+          <div class="panel-heading">
+            <h1 class="page-header small">My Friends</h1>
+            <p class="page-subtitle small">You have recemtly connected with <?php echo $friendsA['COUNT(userId)']; ?></p>
+          </div>
+          <div class="col-md-12">
+            <div class="memberblock">
+              <?php 
+              
+            $userid=$_SESSION['userId'];
+            $friends=$db->SelectData("SELECT firstName,lastName FROM userac WHERE  userid  in ( SELECT USERID2 FROM FRIENDSHIP WHERE USERID=$userid) 
+              or userid  in ( SELECT USERID FROM FRIENDSHIP WHERE USERID2=$userid)
+               ");
+               foreach($friends as $Friend):?>
+             <a href="" class="member"> <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="">
+              <div class="memmbername"><?php echo $Friend['firstName']." ".$Friend['lastName']; ?></div>
+              </a>
+              <?php endforeach; ?>
+                </div>
+          </div>
+          <div class="clearfix"></div>
+        </div>
+      </div>
+      <div class="col-md-8 col-sm-12 pull-left posttimeline">
         <div class="panel panel-default">
           <div class="panel-body">
             <div class="status-upload nopaddingbtm">
@@ -132,12 +166,12 @@ if(isset($_SESSION['userId'])){
             <!-- Status Upload  --> 
           </div>
         </div>
- <?php 
+        
+
+<?php 
  
  $userid=$_SESSION['userId'];
  $qurey="SELECT * FROM posts WHERE userid=$userid 
-or userid  in ( SELECT USERID2 FROM FRIENDSHIP WHERE USERID=$userid) 
-or userid  in ( SELECT USERID FROM FRIENDSHIP WHERE USERID2=$userid)
 order by datetimecurrent DESC";
 $posts=$db->SelectData($qurey);
  
@@ -214,93 +248,14 @@ $posts=$db->SelectData($qurey);
         </div>
 <?php endforeach; ?>
 </div>
-
-
- <div class="col-md-3 col-sm-12 pull-right">
-        <div class="panel panel-default">
-          <div class="panel-heading">
-            <p class="page-subtitle small"><b>people you may know at FriendsWorld </b>
-            <img src="images/caticon.png" ></p>
-          </div>
-          
-          <?php
-          $userid=$_SESSION['userId'];
-            $notfriends=$db->SelectData("SELECT userId,firstName,lastName FROM userac where userId not in (SELECT userId2 FROM friendship where userId =$userid)");
-            foreach($notfriends as $notFriend):?>
-                
-                   <div style="margin-bottom: 10px;margin-top: 3px;margin-left: 10px;" 
-                    class="clearfix"> <b style="color: black;"><?php echo $notFriend['firstName']." ".$notFriend['lastName'] ; ?> </b>
-                    <button  id="<?php echo $notFriend['userId']; ?>"
-                    class="btn btn--radius-2 btn--blue addfriend" style=" margin-left: 10px;
-  margin-right: 10px;
-  background-color: #de41b0;
-  color:white; 
-  float:right;"
-                     type="submit" name="addFriends">Add Friend</button></div>
-         <?php endforeach; ?>
-        
-
-        </div>
-        </div>
-	
 </div>
 </div>
-<?php
 
-?>
-<script type="text/javascript">
-
-function add_like(postId)
-{
-    jQuery.ajax({
-        type: "GET",
-        url: "like.php?postid="+postId,
-        data:
-         {functionname: 'addlike'}, 
-         success:function(data) {
-        //alert(data); 
-         }
-    });
-}
-$(document).ready(function() {
-
-    $(".LIKES").click(function(event) {
-      //event.preventDefault();
-      var postId=$(this).attr('id');
-       add_like(postId); 
-      //return false;
-       });
-});
-
-function add_friends(friendId)
-{
-    jQuery.ajax({
-        type: "GET",
-        url: "addfriends.php?friendid="+friendId,
-        data:
-         {functionname: 'addfriends'}, 
-         success:function(data) {
-        //alert(data); 
-         }
-    });
-}
-$(document).ready(function() {
-
-    $(".addfriend").click(function(event) {
-      //event.preventDefault();
-      var friendId=$(this).attr('id');
-       add_friends(friendId); 
-      //return false;
-       });
-});
-
-  </script>
 </body>
 </html>
-
 <?php
 }
 else{
-	header("location:login.php?loginStatus=notlogin");
+  header("location:login.php?loginStatus=notlogin");
 }
 ?>
