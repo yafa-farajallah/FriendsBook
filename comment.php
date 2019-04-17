@@ -1,7 +1,7 @@
 <?php
 session_start();
 require('conn.php'); 
-if(isset($_POST['commentText']))
+if(isset($_POST['commentText']) && $_POST['commentText']!='')
 {
 $connection=$db->conn;
 $comment=$connection->real_escape_string($_POST['commentText']);
@@ -11,5 +11,6 @@ $userId=$_SESSION['userId'];
     if ($db->InsertData($query))
       header("location:index.php");
   }
-  else {echo mysqli_error($db->conn);}
+  else {echo mysqli_error($db->conn);
+  header("location:index.php");}
  ?>
