@@ -41,6 +41,18 @@
 			}
 		}
 
+		public function count_likes($postId){
+			$result=$this->SelectData("SELECT COUNT(likeId)  FROM likes WHERE postId=".$postId);
+			$Nlikes=mysqli_fetch_assoc($result);
+			return $Nlikes['COUNT(likeId)'];
+		}
+
+		public function count_comments($postId){
+			$result=$this->SelectData("SELECT COUNT(commentId)  FROM comments WHERE postId=".$postId);
+			$Ncomments=mysqli_fetch_assoc($result);
+			return $Ncomments['COUNT(commentId)'];
+		}
+
 }
 	
 	$db = new DB();

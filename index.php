@@ -162,15 +162,25 @@ $posts=$db->SelectData($qurey);
                   <small><i class="fa fa-clock-o"></i> <?php echo $row['dateTimeCurrent']; ?> </small> </h4>
                 <p><?php echo $row['postText']; ?> </p>
                 <?php  
-                 $result=$db->SelectData("SELECT COUNT(likeId)  FROM likes WHERE postId=".$row['postId']);
-                $Nlikes=mysqli_fetch_assoc($result);
-                 $result=$db->SelectData("SELECT COUNT(commentId)  FROM comments WHERE postId=".$row['postId']);
-                $Ncomments=mysqli_fetch_assoc($result);
                 $postId=$row['postId'];
+
+                $Nlikes=$db->count_likes($postId);
+                $Ncomments=$db->count_comments($postId);
+                
                 ?>
                 <ul class="nav nav-pills pull-left ">
-                  <li><a class="LIKES" id="<?php echo $postId; ?>" style="color: #de41b0;cursor: pointer;"   title=""><i style="color: #de41b0;" class="glyphicon glyphicon-thumbs-up"></i> <?php echo $Nlikes['COUNT(likeId)']; ?></a></li>
-                  <li><a style="color: #de41b0;"  title=""><i style="color: #de41b0;"  class=" glyphicon glyphicon-comment"></i><?php echo $Ncomments['COUNT(commentId)']; ?></a></li>
+                  <li>
+                    <a class="LIKES" id="<?php echo $postId; ?>" style="color: #de41b0;cursor: pointer;"   title="">
+                      <i style="color: #de41b0;" class="glyphicon glyphicon-thumbs-up"></i>
+                      <span class="num-likes"><?php echo $Nlikes ?></span>
+                    </a>
+                  </li>
+                  <li>
+                    <a id="Ncomment<?php echo $postId; ?>" style="color: #de41b0;"  title="">
+                      <i style="color: #de41b0;"  class=" glyphicon glyphicon-comment"></i>
+                      <span class="num-comments"><?php echo $Ncomments; ?></span>
+                    </a>
+                  </li>
                   
                 </ul>
               </div>
@@ -180,12 +190,12 @@ $posts=$db->SelectData($qurey);
             <div class=" status-upload nopaddingbtm status-upload">
 
               
-              <form action="comment.php?postId=<?php echo $row['postId']; ?>" method="post">
+              <form id="form<?php echo $postId; ?>">
                   <label style="color: #de41b0;" >Comment</label>
-                  <textarea name="commentText" class="form-control" placeholder="Comment here"></textarea>
+                  <textarea name="commentText" class="form-control" placeholder="Comment here" required></textarea>
                   <br>
                   
-                  <button name="comment" style="background-color:  #de41b0;border-color:#de41b0;" type="submit" class="btn btn-success pull-right"> Comment</button>
+                  <button id="<?php echo $postId; ?>"  style="background-color:  #de41b0;border-color:#de41b0;"  class="commentbtn btn btn-success pull-right"> Comment</button>
                 <br><br>
               </form>
                 <?php 
@@ -232,10 +242,10 @@ $posts=$db->SelectData($qurey);
                     class="clearfix"> <b style="color: black;"><?php echo $notFriend['firstName']." ".$notFriend['lastName'] ; ?> </b>
                     <button  id="<?php echo $notFriend['userId']; ?>"
                     class="btn btn--radius-2 btn--blue addfriend" style=" margin-left: 10px;
-  margin-right: 10px;
-  background-color: #de41b0;
-  color:white; 
-  float:right;"
+                      margin-right: 10px;
+                      background-color: #de41b0;
+                      color:white; 
+                      float:right;"
                      type="submit" name="addFriends">Add Friend</button></div>
          <?php endforeach; ?>
         
@@ -255,44 +265,69 @@ function add_like(postId)
     jQuery.ajax({
         type: "GET",
         url: "like.php?postid="+postId,
-        data:
-         {functionname: 'addlike'}, 
-         success:function(data) {
-        //alert(data); 
+        success: function(data) {
+           $("#"+postId+ " .num-likes").html(data);
+
          }
     });
 }
-$(document).ready(function() {
 
-    $(".LIKES").click(function(event) {
-      //event.preventDefault();
-      var postId=$(this).attr('id');
-       add_like(postId); 
-      //return false;
-       });
-});
+function add_comment(postId)
+{
+    jQuery.ajax({
+        type: "POST",
+        url: "comment.php?postId="+postId,
+        data: jQuery("#form"+postId).serialize(),
+         success:function(Ncomments) {
+          $("#Ncomment"+postId+ " .num-comments").html(Ncomments);
+         console.log("successed"+Ncomments+"#form"+postId); 
+         }
+    });
+}
 
-function add_friends(friendId)
+function add_friends_req(friendId)
 {
     jQuery.ajax({
         type: "GET",
         url: "addfriends.php?friendid="+friendId,
-        data:
-         {functionname: 'addfriends'}, 
-         success:function(data) {
-        //alert(data); 
+        
+         success:function(friend) {
+        //alert(friend); 
          }
     });
 }
 $(document).ready(function() {
 
-    $(".addfriend").click(function(event) {
-      //event.preventDefault();
+    $(".LIKES").click(function() {
+    
+      var postId=$(this).attr('id');
+       add_like(postId); 
+
+      
+       });
+
+    $(".commentbtn").click(function() {
+      var postId=$(this).attr('id');
+      console.log("comment button clicked on post id " + postId);
+      add_comment(postId); 
+      console.log("comment added");
+      $("#form"+postId+ " textarea").val('');
+      console.log("#form"+postId+ " textarea");
+
+      return false ;
+     
+       });   
+
+       $(".addfriend").click(function() {
       var friendId=$(this).attr('id');
-       add_friends(friendId); 
-      //return false;
+      console.log("add friend button clicked on friend id " + friendId);
+       add_friends_req(friendId);
+       console.log("raquest send");
+
+       return false; 
        });
 });
+
 
   </script>
 </body>

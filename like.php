@@ -17,6 +17,6 @@ $del=$db->InsertData($query2);
 else
 $add=$db->InsertData($query3);
 
-//echo "success";
+echo $db->count_likes($postId);
 
 ?>
