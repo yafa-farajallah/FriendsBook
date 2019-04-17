@@ -25,6 +25,8 @@ if(isset($_SESSION['userId'])){
   <title>My Profile</title>
 <link href="css/profile.css" rel="stylesheet">
 <link rel="icon" href="images/caticon.png">
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
 <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -250,7 +252,53 @@ $posts=$db->SelectData($qurey);
 </div>
 </div>
 </div>
+<script type="text/javascript">
 
+function add_like(postId)
+{
+    jQuery.ajax({
+        type: "GET",
+        url: "like.php?postid="+postId,
+        data:
+         {functionname: 'addlike'}, 
+         success:function(data) {
+        //alert(data); 
+         }
+    });
+}
+$(document).ready(function() {
+
+    $(".LIKES").click(function(event) {
+      //event.preventDefault();
+      var postId=$(this).attr('id');
+       add_like(postId); 
+      //return false;
+       });
+});
+
+function add_friends(friendId)
+{
+    jQuery.ajax({
+        type: "GET",
+        url: "addfriends.php?friendid="+friendId,
+        data:
+         {functionname: 'addfriends'}, 
+         success:function(data) {
+        //alert(data); 
+         }
+    });
+}
+$(document).ready(function() {
+
+    $(".addfriend").click(function(event) {
+      //event.preventDefault();
+      var friendId=$(this).attr('id');
+       add_friends(friendId); 
+      //return false;
+       });
+});
+
+  </script>
 </body>
 </html>
 <?php
