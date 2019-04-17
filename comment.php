@@ -11,6 +11,7 @@ $userId=$_SESSION['userId'];
 	$query = "INSERT INTO comments (postId,userId,dateCurrent,CommentText)VALUES ($postId,$userId,curTime(),'$comment')";
     $result=$db->InsertData($query);
    echo $db->count_comments($postId) ;  
+   
 }
 
  ?>
