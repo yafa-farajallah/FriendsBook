@@ -162,12 +162,12 @@ $posts=$db->my_friends_posts($userid);
 
                 $Nlikes=$db->count_likes($postId);
                 $Ncomments=$db->count_comments($postId);
-                
+                $like_color=$db->like_color($postId,$userid);
                 ?>
                 <ul class="nav nav-pills pull-left ">
                   <li>
                     <a class="LIKES"  style="color: #de41b0;cursor: pointer;"   title="">
-                      <i style="color: #de41b0;" class="glyphicon glyphicon-thumbs-up"></i>
+                      <i style="color: <?php echo $like_color; ?>" class="like_color glyphicon glyphicon-thumbs-up"></i>
                       <span class="num-likes"><?php echo $Nlikes ?></span>
                     </a>
                   </li>
@@ -221,20 +221,23 @@ $posts=$db->my_friends_posts($userid);
           </div>
           
           <?php
-          $userid=$_SESSION['userId'];
-            $notfriends=$db->SelectData("SELECT userId,firstName,lastName FROM userac where userId not in (SELECT userId2 FROM friendship where userId =$userid)");
-            foreach($notfriends as $notFriend):?>
+            $notfriends=$db->get_not_friends($userid);
+            foreach($notfriends as $notFriend):{
+            $notfriendId=$notFriend['userId'];
+            $request_status=$db->request_status($userid,$notfriendId);
+            ?>
                 
-                   <div style="margin-bottom: 10px;margin-top: 3px;margin-left: 10px;" 
-                    class="clearfix"> <b style="color: black;"><?php echo $notFriend['firstName']." ".$notFriend['lastName'] ; ?> </b>
-                    <button  id="<?php echo $notFriend['userId']; ?>"
-                    class="btn btn--radius-2 btn--blue addfriend" style=" margin-left: 10px;
-                      margin-right: 10px;
-                      background-color: #de41b0;
-                      color:white; 
-                      float:right;"
-                     type="submit" name="addFriends">Add Friend</button></div>
-         <?php endforeach; ?>
+            <div style="margin-bottom: 10px;margin-top: 3px;margin-left: 10px;" 
+            class="clearfix"> <b style="color: black;"><?php echo $db->FullName($notfriendId); ?> </b>
+            <button  id="<?php echo $notfriendId; ?>"
+            class="btn btn--radius-2 btn--blue addfriend" style=" margin-left: 10px;
+              margin-right: 10px;
+              background-color: #de41b0;
+              color:white; 
+              float:right;"
+                       
+                      name="addFriends"><?php echo $request_status; ?></button></div>
+         <?php }endforeach; ?>
         
 
         </div>
@@ -252,9 +255,11 @@ function add_like(postId)
     jQuery.ajax({
         type: "GET",
         url: "like.php?postid="+postId,
-        success: function(data) {
-           $("#"+postId+ " .num-likes").html(data);
-
+        success: function(data1) {
+          var response = $.parseJSON(data1);
+           console.log(data1);
+           $("#"+postId+ " .num-likes").html(response.no_likes);
+           $("#"+postId+ " .like_color").css("color",response.color);
          }
     });
 }
@@ -282,7 +287,8 @@ function add_friends_req(friendId)
         url: "addfriends.php?friendid="+friendId,
         
          success:function(friend) {
-        //alert(friend); 
+         $("#"+friendId).html("Request Send");
+        
          }
     });
 }

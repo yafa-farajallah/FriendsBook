@@ -119,21 +119,48 @@ COMMENT_HTML;
     }
     public function my_posts($userid)
     {
-     $qurey="SELECT * FROM posts WHERE userid=$userid 
-     order by datetimecurrent DESC";
-     $posts=$this->SelectData($qurey);
-     return $posts;
+		$qurey="SELECT * FROM posts WHERE userid=$userid 
+		order by datetimecurrent DESC";
+		$posts=$this->SelectData($qurey);
+		return $posts;
     }
     public function my_friends_posts($userid)
     {
-    $qurey="SELECT * FROM posts WHERE userid=$userid 
-    or userid  in ( SELECT USERID2 FROM FRIENDSHIP WHERE USERID=$userid) 
-    or userid  in ( SELECT USERID FROM FRIENDSHIP WHERE USERID2=$userid)
-    order by datetimecurrent DESC";
-    $posts=$this->SelectData($qurey);
-    return $posts;
-  }
+		$qurey="SELECT * FROM posts WHERE userid=$userid 
+		or userid  in ( SELECT USERID2 FROM FRIENDSHIP WHERE USERID=$userid) 
+		or userid  in ( SELECT USERID FROM FRIENDSHIP WHERE USERID2=$userid)
+		order by datetimecurrent DESC";
+		$posts=$this->SelectData($qurey);
+		return $posts;
+    }
 
+    public function get_not_friends($userid){
+		return $this->SelectData("SELECT userId,firstName,lastName FROM userac
+		 where userId not in (SELECT userId2 FROM friendship where userId =$userid)");
+	}
+
+	public function request_status($userId,$notfriendId){
+	 $query="SELECT * From notifications where forUserId=$userId and userReqIdFrind=$notfriendId"	;
+	 if($this->SelectData($query))
+	 return "Request Sent";
+	 else
+	 return "Add Friend";
+	} 
+
+	public function insert_notification($userId,$friendId){
+		$query="INSERT INTO notifications ( forUserId, notificationType, userReqIdFrind, notificationContent, seen, dateCurrent)
+		VALUES ($userId,0,$friendId,$userId,0,curTime())";
+		return $this->InsertData($query);
+	}
+
+	public function like_color($postId,$userId){
+		$query="SELECT * From likes where userId=$userId and postId=$postId"	;
+		if($this->SelectData($query))
+		return "#de41b0";
+		else
+		return "black";
+	   }
+	
 }
 	
 	$db = new DB();
