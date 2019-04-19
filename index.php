@@ -104,11 +104,26 @@ if(isset($_SESSION['userId'])){
         
         
       </ul>
-    
+     
+     
       <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="font-size:18px; color:white;">
+            <span class="label label-pill label-danger count" style="border-radius:10px;"></span>
+            Notification</a>
+          <ul class="dropdown-menu"></ul>
+        </li>
+          
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <span class="label label-pill label-danger count" style="border-radius:10px;"></span>
+            <span class="glyphicon glyphicon-envelope" style="font-size:18px; color:white;"></span></a>
+          <ul class="dropdown-menu"></ul>
+        </li>
+
         <li><img src="images/whiteicon.png" style="margin-top: 12px;"></li>
         <li><a a style="color: white;"href="index.php?action=logout">logout</a></li>
-        
+          
       </ul>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
