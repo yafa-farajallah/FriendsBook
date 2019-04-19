@@ -69,8 +69,8 @@ function DoAction($action)
 }
 session_start();
 if(isset($_SESSION['userId'])){
-  $id=$_SESSION['userId'];
-  $query ="SELECT * FROM userac where userId=$id";
+  $userid=$_SESSION['userId'];
+  $query ="SELECT * FROM userac where userId=$userid";
   $result=$db->SelectData($query);
   $user=mysqli_fetch_array($result);
   $firstName=$user[3];
@@ -119,7 +119,7 @@ if(isset($_SESSION['userId'])){
         <div class="panel panel-default">
           <div class="panel-body">
             <div class="status-upload nopaddingbtm">
-              <form action="post.php" method="post">
+              <form action="post.php?page=index.php" method="post">
                 <input type="textarea" class="form-control" name="post"  placeholder="What are you doing right now?">
                 <br>
                 <ul class="nav nav-pills pull-left ">
@@ -134,12 +134,7 @@ if(isset($_SESSION['userId'])){
         </div>
  <?php 
  
- $userid=$_SESSION['userId'];
- $qurey="SELECT * FROM posts WHERE userid=$userid 
-or userid  in ( SELECT USERID2 FROM FRIENDSHIP WHERE USERID=$userid) 
-or userid  in ( SELECT USERID FROM FRIENDSHIP WHERE USERID2=$userid)
-order by datetimecurrent DESC";
-$posts=$db->SelectData($qurey);
+$posts=$db->my_friends_posts($userid);
  
  if($posts)
   foreach($posts as  $row):
@@ -177,7 +172,7 @@ $posts=$db->SelectData($qurey);
                     </a>
                   </li>
                   <li>
-                    <a class="COMMENTS"  style="color: #de41b0;"  title="">
+                    <a class="COMMENTS"  style="color: #de41b0;cursor: pointer;"  title="">
                       <i style="color: #de41b0;"  class=" glyphicon glyphicon-comment"></i>
                       <span class="num-comments"><?php echo $Ncomments; ?></span>
                     </a>
@@ -316,7 +311,7 @@ $(document).ready(function() {
       //console.log("comment added");
       $("#"+postId+ " .add-comment-form textarea").val('');
 
-      return false ;
+      return false;
      
        });   
 

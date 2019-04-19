@@ -90,6 +90,50 @@ COMMENT_HTML;
     $comment_html = str_replace("{{comment_date}}", $comment['dateCurrent'], $comment_html);
 	return $comment_html;
 	}
+	public function count_friends ($userid){
+		$qurey="SELECT COUNT(userId) FROM userac WHERE  userid  in 
+		( SELECT USERID2 FROM FRIENDSHIP WHERE USERID=$userid) 
+         or userid  in ( SELECT USERID FROM FRIENDSHIP WHERE USERID2=$userid) ";
+        $friends=$this->SelectData($qurey);
+ 
+            if($friends)
+              {   $Nfriends=mysqli_fetch_assoc($friends);
+            	return  $Nfriends['COUNT(userId)'];
+              }
+	}
+	public function count_posts($userid)
+	{
+        $qurey="SELECT COUNT(postId) FROM posts WHERE userid=$userid ";
+        $posts=$this->SelectData($qurey);
+         if($posts)
+            { $NPosts=mysqli_fetch_assoc($posts);
+            	return $NPosts['COUNT(postId)'];
+            }           
+	}
+	public function my_friends($userid)
+	{
+	    $friends=$this->SelectData("SELECT firstName,lastName FROM userac WHERE  userid  in 
+	    ( SELECT USERID2 FROM FRIENDSHIP WHERE USERID=$userid) 
+         or userid  in ( SELECT USERID FROM FRIENDSHIP WHERE USERID2=$userid) ");
+	    return $friends;
+    }
+    public function my_posts($userid)
+    {
+     $qurey="SELECT * FROM posts WHERE userid=$userid 
+     order by datetimecurrent DESC";
+     $posts=$this->SelectData($qurey);
+     return $posts;
+    }
+    public function my_friends_posts($userid)
+    {
+    $qurey="SELECT * FROM posts WHERE userid=$userid 
+    or userid  in ( SELECT USERID2 FROM FRIENDSHIP WHERE USERID=$userid) 
+    or userid  in ( SELECT USERID FROM FRIENDSHIP WHERE USERID2=$userid)
+    order by datetimecurrent DESC";
+    $posts=$this->SelectData($qurey);
+    return $posts;
+  }
+
 }
 	
 	$db = new DB();

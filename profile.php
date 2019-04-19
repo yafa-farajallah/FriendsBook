@@ -4,8 +4,8 @@
 require('conn.php');
 session_start();
 if(isset($_SESSION['userId'])){
-  $id=$_SESSION['userId'];
-  $query ="SELECT * FROM userac where userId=$id";
+  $userid=$_SESSION['userId'];
+  $query ="SELECT * FROM userac where userId=$userid";
   $result=$db->SelectData($query);
   $user=mysqli_fetch_array($result);
   $username=$user[1];
@@ -63,7 +63,7 @@ if(isset($_SESSION['userId'])){
         <div class="panel panel-default">
           <div class="userprofile social ">
             <div class="userpic"> <img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="" class="userpicimg"> </div>
-            <h3 class="username"><?php echo $firstName." ".$lastName ?></h3>
+            <h3 class="username"><?php echo $db->FullName($_SESSION['userId']) ?></h3>
            
             <p><?php echo $username ?></p>
             <div class="socials tex-center"> <a href="" class="btn btn-circle btn-primary ">
@@ -75,26 +75,12 @@ if(isset($_SESSION['userId'])){
           <div class="col-md-12 border-top border-bottom">
             <ul class="nav nav-pills pull-left countlist" role="tablist">
               <li role="presentation">
-              <?php   $userid=$_SESSION['userId'];
-             $qurey="SELECT COUNT(userId) FROM userac WHERE  userid  in ( SELECT USERID2 FROM FRIENDSHIP WHERE USERID=$userid) 
-              or userid  in ( SELECT USERID FROM FRIENDSHIP WHERE USERID2=$userid) ";
-              $friends=$db->SelectData($qurey);
- 
-            if($friends)
-             $friendsA=mysqli_fetch_assoc($friends);
-            ?>
-                <h3><?php echo $friendsA['COUNT(userId)']; ?><br>
+              
+                <h3><?php echo $db->count_friends($userid); ?><br>
                   <small>Friends</small> </h3>
               </li>
               <li role="presentation">
-                <?php   $userid=$_SESSION['userId'];
-             $qurey="SELECT COUNT(postId) FROM posts WHERE userid=$userid ";
-              $posts=$db->SelectData($qurey);
- 
-            if($posts)
-             $PostsA=mysqli_fetch_assoc($posts);
-            ?>
-                <h3><?php echo $PostsA['COUNT(postId)']; ?><br>
+                <h3><?php echo $db->count_posts($userid); ?><br>
                   <small>Posts</small> </h3>
               </li>
               
@@ -131,17 +117,13 @@ if(isset($_SESSION['userId'])){
         <div class="panel panel-default">
           <div class="panel-heading">
             <h1 class="page-header small">My Friends</h1>
-            <p class="page-subtitle small">You have recemtly connected with <?php echo $friendsA['COUNT(userId)']; ?></p>
+            <p class="page-subtitle small">You have recently connected with <?php echo $db->count_friends($userid); ?></p>
           </div>
           <div class="col-md-12">
             <div class="memberblock">
               <?php 
-              
-            $userid=$_SESSION['userId'];
-            $friends=$db->SelectData("SELECT firstName,lastName FROM userac WHERE  userid  in ( SELECT USERID2 FROM FRIENDSHIP WHERE USERID=$userid) 
-              or userid  in ( SELECT USERID FROM FRIENDSHIP WHERE USERID2=$userid)
-               ");
-               foreach($friends as $Friend):?>
+              $friends=$db->my_friends($userid);
+              foreach($friends as $Friend):?>
              <a href="" class="member"> <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="">
               <div class="memmbername"><?php echo $Friend['firstName']." ".$Friend['lastName']; ?></div>
               </a>
@@ -155,7 +137,7 @@ if(isset($_SESSION['userId'])){
         <div class="panel panel-default">
           <div class="panel-body">
             <div class="status-upload nopaddingbtm">
-              <form action="post.php" method="post">
+              <form action="post.php?page=profile.php" method="post">
                 <input type="textarea" class="form-control" name="post"  placeholder="What are you doing right now?">
                 <br>
                 <ul class="nav nav-pills pull-left ">
@@ -171,15 +153,12 @@ if(isset($_SESSION['userId'])){
         
 
 <?php 
- 
- $userid=$_SESSION['userId'];
- $qurey="SELECT * FROM posts WHERE userid=$userid 
-order by datetimecurrent DESC";
-$posts=$db->SelectData($qurey);
+$posts=$db->my_posts($userid);
  
  if($posts)
-  foreach($posts as  $row):?>
-        <div class="panel panel-default">
+  foreach($posts as  $row):
+    $postId=$row['postId'];?>
+        <div id="<?php echo $postId ; ?>" class="panel panel-default post-panel">
           <div class="btn-group pull-right postbtn">
             <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
             <ul class="dropdown-menu pull-right" role="menu">
@@ -191,22 +170,32 @@ $posts=$db->SelectData($qurey);
             <div class="media">
               <div class="media-left"> <a href="javascript:void(0)"> <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="media-object"> </a> </div>
               <div class="media-body">
-                <?php $result=$db->SelectData("SELECT firstName,lastName FROM userac WHERE userId=".$row['userId']);
-                $name=mysqli_fetch_assoc($result);
-                 ?>
-                <h4 class="media-heading"> <?php echo $name['firstName']." ".$name['lastName'] ; ?> <br>
+                <?php 
+                $name=$db->FullName($row['userId']);
+                ?>
+                <h4 class="media-heading"> <?php echo $name ; ?> <br>
                   <small><i class="fa fa-clock-o"></i> <?php echo $row['dateTimeCurrent']; ?> </small> </h4>
                 <p><?php echo $row['postText']; ?> </p>
                 <?php  
-                 $result=$db->SelectData("SELECT COUNT(likeId)  FROM likes WHERE postId=".$row['postId']);
-                $Nlikes=mysqli_fetch_assoc($result);
-                 $result=$db->SelectData("SELECT COUNT(commentId)  FROM comments WHERE postId=".$row['postId']);
-                $Ncomments=mysqli_fetch_assoc($result);
-                $postId=$row['postId'];
+                
+
+                $Nlikes=$db->count_likes($postId);
+                $Ncomments=$db->count_comments($postId);
+                
                 ?>
                 <ul class="nav nav-pills pull-left ">
-                  <li><a class="LIKES" id="<?php echo $postId; ?>" style="color: #de41b0;cursor: pointer;"   title=""><i style="color: #de41b0;" class="glyphicon glyphicon-thumbs-up"></i> <?php echo $Nlikes['COUNT(likeId)']; ?></a></li>
-                  <li><a style="color: #de41b0;"  title=""><i style="color: #de41b0;"  class=" glyphicon glyphicon-comment"></i><?php echo $Ncomments['COUNT(commentId)']; ?></a></li>
+                  <li>
+                    <a class="LIKES"  style="color: #de41b0;cursor: pointer;"   title="">
+                      <i style="color: #de41b0;" class="glyphicon glyphicon-thumbs-up"></i>
+                      <span class="num-likes"><?php echo $Nlikes ?></span>
+                    </a>
+                  </li>
+                  <li>
+                    <a class="COMMENTS"  style="color: #de41b0;cursor: pointer;"  title="">
+                      <i style="color: #de41b0;"  class=" glyphicon glyphicon-comment"></i>
+                      <span class="num-comments"><?php echo $Ncomments; ?></span>
+                    </a>
+                  </li>
                   
                 </ul>
               </div>
@@ -216,33 +205,24 @@ $posts=$db->SelectData($qurey);
             <div class=" status-upload nopaddingbtm status-upload">
 
               
-              <form action="comment.php?postId=<?php echo $row['postId']; ?>" method="post">
+              <form class="add-comment-form">
                   <label style="color: #de41b0;" >Comment</label>
-                  <textarea name="commentText" class="form-control" placeholder="Comment here"></textarea>
+                  <textarea name="commentText" class="form-control" placeholder="Comment here" required></textarea>
                   <br>
                   
-                  <button name="comment" style="background-color:  #de41b0;border-color:#de41b0;" type="submit" class="btn btn-success pull-right"> Comment</button>
+                  <button  style="background-color:  #de41b0;border-color:#de41b0;"
+                    class="commentbtn btn btn-success pull-right"> Comment</button>
                 <br><br>
               </form>
+              <div class="comments-area" >
                 <?php 
- 
-                    
-                    $qurey="SELECT * FROM comments WHERE postid=$postId order by dateCurrent DESC";
-                    $comments=$db->SelectData($qurey);
-                    
+                    $comments=$db->get_comments($postId); 
                     if($comments)
-                      foreach($comments as  $comment):?>
-                      <div class="comment">
-                        <?php $result=$db->SelectData("SELECT firstName,lastName FROM userac WHERE userId=".$comment['userId']);
-                          $name=mysqli_fetch_assoc($result);
-                        ?>
-                        <div class="commenter"><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="media-object" width="30px"></div>
-                        <div  class="commenter"  style="color: #de41b0; font-size:17px; "><?php echo $name['firstName']." ".$name['lastName'] ; ?></div>
-                       
-                        <div class="" style=" font-size:15px;"><?php echo $comment['CommentText']; ?></div>
-                        <div class="date" style=" font-size:10px;"><?php echo $comment['dateCurrent']; ?> </div>
-                      </div>
-                      <?php endforeach; ?>
+                      foreach($comments as $comment):
+                        echo $db->get_comment_html($comment);
+                      endforeach;
+                  ?>
+             </div>
             </div>
             <!-- Status Upload  --> 
             
@@ -259,44 +239,59 @@ function add_like(postId)
     jQuery.ajax({
         type: "GET",
         url: "like.php?postid="+postId,
-        data:
-         {functionname: 'addlike'}, 
-         success:function(data) {
-        //alert(data); 
+        success: function(data) {
+           $("#"+postId+ " .num-likes").html(data);
+
          }
     });
 }
-$(document).ready(function() {
 
-    $(".LIKES").click(function(event) {
-      //event.preventDefault();
-      var postId=$(this).attr('id');
-       add_like(postId); 
-      //return false;
-       });
-});
-
-function add_friends(friendId)
+function add_comment(postId)
 {
     jQuery.ajax({
-        type: "GET",
-        url: "addfriends.php?friendid="+friendId,
-        data:
-         {functionname: 'addfriends'}, 
+        type: "POST",
+        url: "comment.php?postId="+postId,
+        data: jQuery("#"+postId+" .add-comment-form").serialize(),
          success:function(data) {
-        //alert(data); 
+          var responce = $.parseJSON(data);
+          var Ncomments=responce.no_comments; 
+          $("#"+postId+ " .num-comments").html(Ncomments);
+          $("#"+postId+" .comments-area").prepend(responce.comment_html);
+         //console.log("successed"+Ncomments+"#form"+postId); 
          }
     });
 }
 $(document).ready(function() {
 
-    $(".addfriend").click(function(event) {
-      //event.preventDefault();
-      var friendId=$(this).attr('id');
-       add_friends(friendId); 
-      //return false;
+    $(".LIKES").click(function() {
+    
+      var postId=$(this).parents(".post-panel").attr('id');
+       add_like(postId); 
+
+      
        });
+
+       $(".COMMENTS").click(function() {
+          //var postId = $(this).parents("ul").find('.LIKES').attr('id');
+          var postId = $(this).parents(".post-panel").attr('id');
+          $("#" + postId+" .comments-area").fadeIn();
+          //console.log("comment added "+($(this).attr('id')));
+           
+     });
+
+    $(".commentbtn").click(function() {
+      var postId=$(this).parents(".post-panel").attr('id');
+      //console.log("comment button clicked on post id " + postId);
+      add_comment(postId); 
+      //console.log("comment added");
+      $("#"+postId+ " .add-comment-form textarea").val('');
+
+      return false;
+     
+       });   
+ 
 });
+
 
   </script>
 </body>
