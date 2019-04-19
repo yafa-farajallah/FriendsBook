@@ -142,8 +142,9 @@ order by datetimecurrent DESC";
 $posts=$db->SelectData($qurey);
  
  if($posts)
-  foreach($posts as  $row):?>
-        <div class="panel panel-default">
+  foreach($posts as  $row):
+    $postId=$row['postId'];?>
+        <div id="<?php echo $postId ; ?>" class="panel panel-default post-panel">
           <div class="btn-group pull-right postbtn">
             <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
             <ul class="dropdown-menu pull-right" role="menu">
@@ -155,14 +156,14 @@ $posts=$db->SelectData($qurey);
             <div class="media">
               <div class="media-left"> <a href="javascript:void(0)"> <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="media-object"> </a> </div>
               <div class="media-body">
-                <?php $result=$db->SelectData("SELECT firstName,lastName FROM userac WHERE userId=".$row['userId']);
-                $name=mysqli_fetch_assoc($result);
-                 ?>
-                <h4 class="media-heading"> <?php echo $name['firstName']." ".$name['lastName'] ; ?> <br>
+                <?php 
+                $name=$db->FullName($row['userId']);
+                ?>
+                <h4 class="media-heading"> <?php echo $name ; ?> <br>
                   <small><i class="fa fa-clock-o"></i> <?php echo $row['dateTimeCurrent']; ?> </small> </h4>
                 <p><?php echo $row['postText']; ?> </p>
                 <?php  
-                $postId=$row['postId'];
+                
 
                 $Nlikes=$db->count_likes($postId);
                 $Ncomments=$db->count_comments($postId);
@@ -170,13 +171,13 @@ $posts=$db->SelectData($qurey);
                 ?>
                 <ul class="nav nav-pills pull-left ">
                   <li>
-                    <a class="LIKES" id="<?php echo $postId; ?>" style="color: #de41b0;cursor: pointer;"   title="">
+                    <a class="LIKES"  style="color: #de41b0;cursor: pointer;"   title="">
                       <i style="color: #de41b0;" class="glyphicon glyphicon-thumbs-up"></i>
                       <span class="num-likes"><?php echo $Nlikes ?></span>
                     </a>
                   </li>
                   <li>
-                    <a id="Ncomment<?php echo $postId; ?>" style="color: #de41b0;"  title="">
+                    <a class="COMMENTS"  style="color: #de41b0;"  title="">
                       <i style="color: #de41b0;"  class=" glyphicon glyphicon-comment"></i>
                       <span class="num-comments"><?php echo $Ncomments; ?></span>
                     </a>
@@ -190,33 +191,24 @@ $posts=$db->SelectData($qurey);
             <div class=" status-upload nopaddingbtm status-upload">
 
               
-              <form id="form<?php echo $postId; ?>">
+              <form class="add-comment-form">
                   <label style="color: #de41b0;" >Comment</label>
                   <textarea name="commentText" class="form-control" placeholder="Comment here" required></textarea>
                   <br>
                   
-                  <button id="<?php echo $postId; ?>"  style="background-color:  #de41b0;border-color:#de41b0;"  class="commentbtn btn btn-success pull-right"> Comment</button>
+                  <button  style="background-color:  #de41b0;border-color:#de41b0;"
+                    class="commentbtn btn btn-success pull-right"> Comment</button>
                 <br><br>
               </form>
+              <div class="comments-area" >
                 <?php 
- 
-                    
-                    $qurey="SELECT * FROM comments WHERE postid=$postId order by dateCurrent DESC";
-                    $comments=$db->SelectData($qurey);
-                    
+                    $comments=$db->get_comments($postId); 
                     if($comments)
-                      foreach($comments as  $comment):?>
-                      <div class="comment">
-                        <?php $result=$db->SelectData("SELECT firstName,lastName FROM userac WHERE userId=".$comment['userId']);
-                          $name=mysqli_fetch_assoc($result);
-                        ?>
-                        <div class="commenter"><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="media-object" width="30px"></div>
-                        <div  class="commenter"  style="color: #de41b0; font-size:17px; "><?php echo $name['firstName']." ".$name['lastName'] ; ?></div>
-                       
-                        <div class="" style=" font-size:15px;"><?php echo $comment['CommentText']; ?></div>
-                        <div class="date" style=" font-size:10px;"><?php echo $comment['dateCurrent']; ?> </div>
-                      </div>
-                      <?php endforeach; ?>
+                      foreach($comments as $comment):
+                        echo $db->get_comment_html($comment);
+                      endforeach;
+                  ?>
+             </div>
             </div>
             <!-- Status Upload  --> 
             
@@ -277,10 +269,13 @@ function add_comment(postId)
     jQuery.ajax({
         type: "POST",
         url: "comment.php?postId="+postId,
-        data: jQuery("#form"+postId).serialize(),
-         success:function(Ncomments) {
-          $("#Ncomment"+postId+ " .num-comments").html(Ncomments);
-         console.log("successed"+Ncomments+"#form"+postId); 
+        data: jQuery("#"+postId+" .add-comment-form").serialize(),
+         success:function(data) {
+          var responce = $.parseJSON(data);
+          var Ncomments=responce.no_comments; 
+          $("#"+postId+ " .num-comments").html(Ncomments);
+          $("#"+postId+" .comments-area").prepend(responce.comment_html);
+         //console.log("successed"+Ncomments+"#form"+postId); 
          }
     });
 }
@@ -300,19 +295,26 @@ $(document).ready(function() {
 
     $(".LIKES").click(function() {
     
-      var postId=$(this).attr('id');
+      var postId=$(this).parents(".post-panel").attr('id');
        add_like(postId); 
 
       
        });
 
+       $(".COMMENTS").click(function() {
+          //var postId = $(this).parents("ul").find('.LIKES').attr('id');
+          var postId = $(this).parents(".post-panel").attr('id');
+          $("#" + postId+" .comments-area").fadeIn();
+          //console.log("comment added "+($(this).attr('id')));
+           
+     });
+
     $(".commentbtn").click(function() {
-      var postId=$(this).attr('id');
-      console.log("comment button clicked on post id " + postId);
+      var postId=$(this).parents(".post-panel").attr('id');
+      //console.log("comment button clicked on post id " + postId);
       add_comment(postId); 
-      console.log("comment added");
-      $("#form"+postId+ " textarea").val('');
-      console.log("#form"+postId+ " textarea");
+      //console.log("comment added");
+      $("#"+postId+ " .add-comment-form textarea").val('');
 
       return false ;
      
@@ -320,12 +322,13 @@ $(document).ready(function() {
 
        $(".addfriend").click(function() {
       var friendId=$(this).attr('id');
-      console.log("add friend button clicked on friend id " + friendId);
+      //console.log("add friend button clicked on friend id " + friendId);
        add_friends_req(friendId);
-       console.log("raquest send");
+       //console.log("raquest send");
 
        return false; 
        });
+ 
 });
 
 
