@@ -90,6 +90,7 @@ COMMENT_HTML;
     $comment_html = str_replace("{{comment_date}}", $comment['dateCurrent'], $comment_html);
 	return $comment_html;
 	}
+
 	public function count_friends ($userid){
 		$qurey="SELECT COUNT(userId) FROM userac WHERE  userid  in 
 		( SELECT USERID2 FROM FRIENDSHIP WHERE USERID=$userid) 
@@ -101,6 +102,7 @@ COMMENT_HTML;
             	return  $Nfriends['COUNT(userId)'];
               }
 	}
+
 	public function count_posts($userid)
 	{
         $qurey="SELECT COUNT(postId) FROM posts WHERE userid=$userid ";
@@ -110,6 +112,7 @@ COMMENT_HTML;
             	return $NPosts['COUNT(postId)'];
             }           
 	}
+
 	public function my_friends($userid)
 	{
 	    $friends=$this->SelectData("SELECT firstName,lastName FROM userac WHERE  userid  in 
@@ -117,29 +120,37 @@ COMMENT_HTML;
          or userid  in ( SELECT USERID FROM FRIENDSHIP WHERE USERID2=$userid) ");
 	    return $friends;
     }
+
     public function my_posts($userid)
     {
-		$qurey="SELECT * FROM posts WHERE userid=$userid 
-		order by datetimecurrent DESC";
-		$posts=$this->SelectData($qurey);
-		return $posts;
+     $qurey="SELECT * FROM posts WHERE userid=$userid 
+     order by datetimecurrent DESC";
+     $posts=$this->SelectData($qurey);
+     return $posts;
     }
+    
     public function my_friends_posts($userid)
     {
-		$qurey="SELECT * FROM posts WHERE userid=$userid 
-		or userid  in ( SELECT USERID2 FROM FRIENDSHIP WHERE USERID=$userid) 
-		or userid  in ( SELECT USERID FROM FRIENDSHIP WHERE USERID2=$userid)
-		order by datetimecurrent DESC";
-		$posts=$this->SelectData($qurey);
-		return $posts;
-    }
-
-    public function get_not_friends($userid){
+    $qurey="SELECT * FROM posts WHERE userid=$userid 
+    or userid  in ( SELECT USERID2 FROM FRIENDSHIP WHERE USERID=$userid) 
+    or userid  in ( SELECT USERID FROM FRIENDSHIP WHERE USERID2=$userid)
+    order by datetimecurrent DESC";
+    $posts=$this->SelectData($qurey);
+    return $posts;
+  }
+  public function like_color($postId,$userId){
+		$query="SELECT * From likes where userId=$userId and postId=$postId"	;
+		if($this->SelectData($query))
+		return "#de41b0";
+		else
+		return "black";
+	   }
+	    public function get_not_friends($userid){
 		return $this->SelectData("SELECT userId,firstName,lastName FROM userac
 		 where userId not in (SELECT userId2 FROM friendship where userId =$userid)");
 	}
 
-	public function request_status($userId,$notfriendId){
+ 	public function request_status($userId,$notfriendId){
 	 $query="SELECT * From notifications where forUserId=$userId and userReqIdFrind=$notfriendId"	;
 	 if($this->SelectData($query))
 	 return "Request Sent";
@@ -147,20 +158,48 @@ COMMENT_HTML;
 	 return "Add Friend";
 	} 
 
-	public function insert_notification($userId,$friendId){
+ 	public function insert_notification($userId,$friendId){
 		$query="INSERT INTO notifications ( forUserId, notificationType, userReqIdFrind, notificationContent, seen, dateCurrent)
 		VALUES ($userId,0,$friendId,$userId,0,curTime())";
 		return $this->InsertData($query);
 	}
 
-	public function like_color($postId,$userId){
-		$query="SELECT * From likes where userId=$userId and postId=$postId"	;
-		if($this->SelectData($query))
-		return "#de41b0";
+  public function get_notification($userid)
+  {
+  	$qurey="SELECT * FROM notifications WHERE userReqIdFrind=$userid  
+     order by dateCurrent DESC";
+     $result =$this->conn->query($query);
+     $output='';
+		if($result->num_rows >0)
+		{
+			while($row = mysqli_fetch_array($result))
+				  {
+				   $output .= '
+				   <li>
+				    <a href="#">
+				     <strong>'.$row["forUserId"].'</strong><br />
+				     <small><em>Accept or deny</em></small>
+				    </a>
+				   </li>
+				   <li class="divider"></li>
+				   ';
+				  }
+		}
 		else
-		return "black";
-	   }
-	
+		{
+			return $output.='<li><a href="#" class="text-bold text-italic">No Notification Found</a></li>';
+		}
+		$query_1 = "SELECT * FROM notifications WHERE userReqIdFrind=$userid  and seen=0
+         order by dateCurrent DESC";
+		 $result_1 = $this->conn->query($query);
+		 $count = $result_1 ->num_rows;
+		 $data = array(
+		  'notification'   => $output,
+		  'unseen_notification' => $count
+		 );
+		 return $data;
+  }
+
 }
 	
 	$db = new DB();
@@ -169,3 +208,4 @@ COMMENT_HTML;
         die();
     }
 ?>
+

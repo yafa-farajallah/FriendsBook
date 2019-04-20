@@ -109,9 +109,9 @@ if(isset($_SESSION['userId'])){
       <ul class="nav navbar-nav navbar-right">
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="font-size:18px; color:white;">
-            <span class="label label-pill label-danger count" style="border-radius:10px;"></span>
+            <span class="label label-pill label-danger count count1" style="border-radius:10px;"></span>
             Notification</a>
-          <ul class="dropdown-menu"></ul>
+          <ul class="dropdown-menu noti"></ul>
         </li>
           
         <li class="dropdown">
@@ -294,7 +294,36 @@ function add_comment(postId)
          }
     });
 }
+function load_unseen_notification(view='')
+       {
 
+          
+           $.ajax({
+           url:"notification.php",
+           method:"POST",
+           data:{view:view},
+           dataType:"json",
+  
+           success:function(data)
+           
+               {
+
+                  var response = $.parseJSON(data);
+                  var notification =response.notification;
+                  var unseen_notification =response.unseen_notification;
+                  //console.log(notification);
+                  $('.noti').html(notification);
+                  if(unseen_notification >0)
+                  {
+                   $('.count1').html(unseen_notification);
+                  }
+
+               }
+              
+           
+          });
+
+      }
 function add_friends_req(friendId)
 {
     jQuery.ajax({
@@ -303,12 +332,17 @@ function add_friends_req(friendId)
         
          success:function(friend) {
          $("#"+friendId).html("Request Send");
+          load_unseen_notification();
+
         
          }
     });
 }
-$(document).ready(function() {
 
+
+
+$(document).ready(function() {
+ load_unseen_notification();
     $(".LIKES").click(function() {
     
       var postId=$(this).parents(".post-panel").attr('id');
@@ -334,18 +368,34 @@ $(document).ready(function() {
 
       return false;
      
-       });   
+       });  
 
-       $(".addfriend").click(function() {
+      
+
+       $(".addfriend").click(function(event) {
+        
       var friendId=$(this).attr('id');
       //console.log("add friend button clicked on friend id " + friendId);
        add_friends_req(friendId);
-       //console.log("raquest send");
-
+      
        return false; 
        });
+
+     
+
+      $(document).on('click', '.noti', function(){
+      $('.count1').html('');
+      load_unseen_notification('yes');
+      });
+ 
+      setInterval(function(){ 
+      load_unseen_notification();; 
+       }, 5000);
  
 });
+
+      
+
 
 
   </script>
