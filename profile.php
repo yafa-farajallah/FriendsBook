@@ -181,12 +181,14 @@ $posts=$db->my_posts($userid);
 
                 $Nlikes=$db->count_likes($postId);
                 $Ncomments=$db->count_comments($postId);
+                $like_color=$db->like_color($postId,$userid);
+
                 
                 ?>
                 <ul class="nav nav-pills pull-left ">
                   <li>
                     <a class="LIKES"  style="color: #de41b0;cursor: pointer;"   title="">
-                      <i style="color: #de41b0;" class="glyphicon glyphicon-thumbs-up"></i>
+                       <i style="color: <?php echo $like_color; ?>" class="like_color glyphicon glyphicon-thumbs-up"></i>
                       <span class="num-likes"><?php echo $Nlikes ?></span>
                     </a>
                   </li>
@@ -239,9 +241,11 @@ function add_like(postId)
     jQuery.ajax({
         type: "GET",
         url: "like.php?postid="+postId,
-        success: function(data) {
-           $("#"+postId+ " .num-likes").html(data);
-
+        success: function(data1) {
+          var response = $.parseJSON(data1);
+            console.log(data1);
+           $("#"+postId+ " .num-likes").html(response.no_likes);
+           $("#"+postId+ " .like_color").css("color",response.color);
          }
     });
 }
@@ -253,10 +257,10 @@ function add_comment(postId)
         url: "comment.php?postId="+postId,
         data: jQuery("#"+postId+" .add-comment-form").serialize(),
          success:function(data) {
-          var responce = $.parseJSON(data);
-          var Ncomments=responce.no_comments; 
+          var response = $.parseJSON(data);
+          var Ncomments=response.no_comments; 
           $("#"+postId+ " .num-comments").html(Ncomments);
-          $("#"+postId+" .comments-area").prepend(responce.comment_html);
+          $("#"+postId+" .comments-area").prepend(response.comment_html);
          //console.log("successed"+Ncomments+"#form"+postId); 
          }
     });

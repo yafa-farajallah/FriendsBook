@@ -117,11 +117,11 @@ if(isset($_SESSION['userId'])){
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown">
             <span class="label label-pill label-danger count" style="border-radius:10px;"></span>
-            <span class="glyphicon glyphicon-envelope" style="font-size:18px; color:white;"></span></a>
+            <span class="glyphicon glyphicon-envelope" style="font-size:18px; color:white;margin-left: 20px;"></span></a>
           <ul class="dropdown-menu"></ul>
         </li>
 
-        <li><img src="images/whiteicon.png" style="margin-top: 12px;"></li>
+        <li><img src="images/whiteicon.png" style="margin-top: 12px;margin-left:100px; "></li>
         <li><a a style="color: white;"href="index.php?action=logout">logout</a></li>
           
       </ul>
