@@ -109,9 +109,9 @@ if(isset($_SESSION['userId'])){
       <ul class="nav navbar-nav navbar-right">
         <li class="dropdown">
           <a id="notification" class="dropdown-toggle"  data-toggle="dropdown" style=" cursor:pointer; font-size:18px; color:white;">
-            <span class="label label-pill label-danger count count1" style="border-radius:10px;"></span>
+            <span class="label label-pill label-danger count notification_count" style="border-radius:10px;"></span>
             Notification</a>
-          <ul  id="noti" class="dropdown-menu ">
+          <ul  id="notification_menu" class="dropdown-menu ">
           <?php $db->get_notification($userid); ?>
            </ul>
         </li>
@@ -297,33 +297,27 @@ function add_comment(postId)
     });
 }
 function load_unseen_notification(view='')
-       {
+{
+  jQuery.ajax({
+      url:"notification.php?view="+view,
+      method:"GET",
+      //dataType:"json",
 
+      success:function(data)
+      {
+        var response = $.parseJSON(data);
+        console.log(response);
+        var notification =response.notification;
+        var unseen_notification =response.unseen_notification;
         
-        jQuery.ajax({
-           url:"notification.php?view="+view,
-           method:"GET",
-           dataType:"json",
-  
-           success:function(data)
-           
-               {
-                  var response = $.parseJSON(data);
-                  var notification =response.notification;
-                  var unseen_notification =response.unseen_notification;
-                  
-                  $('#noti').html(notification);
-                  if(unseen_notification >0)
-                  {
-                   $('.count1').html(unseen_notification);
-                  }
-
-               }
-              
-           
-          });
-
-      }
+        $('#notification_menu').html(notification);
+        if(unseen_notification >0)
+        {
+          $('.notification_count').html(unseen_notification);
+        }
+      }  
+    });
+}
 function add_friends_req(friendId)
 {
     jQuery.ajax({
@@ -340,54 +334,55 @@ function add_friends_req(friendId)
 
 
 $(document).ready(function() {
- load_unseen_notification();
+  load_unseen_notification();
+
     $(".LIKES").click(function() {
-    
-      var postId=$(this).parents(".post-panel").attr('id');
-       add_like(postId); 
-       });
-
-       $(".COMMENTS").click(function() {
-          //var postId = $(this).parents("ul").find('.LIKES').attr('id');
-          var postId = $(this).parents(".post-panel").attr('id');
-          $("#" + postId+" .comments-area").fadeIn();
-          //console.log("comment added "+($(this).attr('id')));
-           
-     });
-
-    $(".commentbtn").click(function() {
-      var postId=$(this).parents(".post-panel").attr('id');
-      //console.log("comment button clicked on post id " + postId);
-      add_comment(postId); 
-      //console.log("comment added");
-      $("#"+postId+ " .add-comment-form textarea").val('');
-
-      return false;
-     
-       });  
-
-      
-
-       $(".addfriend").click(function(event) {
-        
-      var friendId=$(this).attr('id');
-      //console.log("add friend button clicked on friend id " + friendId);
-       add_friends_req(friendId);
-      
-       return false; 
-       });
-
-     
-       $("#notification").click(function(event) {
-        $('.count1').html('');
-      load_unseen_notification('yes');      
-         });
-
   
- 
-      setInterval(function(){ 
-      load_unseen_notification();; 
-       }, 5000);
+      var postId=$(this).parents(".post-panel").attr('id');
+      add_like(postId); 
+      });
+
+      $(".COMMENTS").click(function() {
+        //var postId = $(this).parents("ul").find('.LIKES').attr('id');
+        var postId = $(this).parents(".post-panel").attr('id');
+        $("#" + postId+" .comments-area").fadeIn();
+        //console.log("comment added "+($(this).attr('id')));
+          
+    });
+
+  $(".commentbtn").click(function() {
+    var postId=$(this).parents(".post-panel").attr('id');
+    //console.log("comment button clicked on post id " + postId);
+    add_comment(postId); 
+    //console.log("comment added");
+    $("#"+postId+ " .add-comment-form textarea").val('');
+
+    return false;
+    
+      });  
+
+    
+
+      $(".addfriend").click(function(event) {
+      
+    var friendId=$(this).attr('id');
+    //console.log("add friend button clicked on friend id " + friendId);
+      add_friends_req(friendId);
+    
+      return false; 
+      });
+
+    
+    $("#notification").click(function(event) {
+    $('.notification_count').html('');
+    load_unseen_notification('yes');      
+      });
+
+
+
+    setInterval(function(){ 
+    load_unseen_notification();; 
+      }, 5000);
  
 });
 

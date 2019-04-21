@@ -191,7 +191,7 @@ COMMENT_HTML;
 		}
 		else
 		{
-			return $output=$output."<li><a class='text-bold text-italic'>No Notification Found</a></li>";
+			$output=$output."<li><a class='text-bold text-italic'>No Notification Found</a></li>";
 		}
 		$data=[];
 		$data['notification']=$output;
