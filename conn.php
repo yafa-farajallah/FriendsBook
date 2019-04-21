@@ -166,37 +166,37 @@ COMMENT_HTML;
 
   public function get_notification($userid)
   {
-  	$qurey="SELECT * FROM notifications WHERE userReqIdFrind=$userid  
+  	$query="SELECT * FROM notifications WHERE userReqIdFrind=$userid  
      order by dateCurrent DESC";
-     $result =$this->conn->query($query);
-     $output='';
-		if($result->num_rows >0)
+     $result =$this->SelectData($query);
+	 $output="";
+	 $count=0;
+		if($result)
 		{
-			while($row = mysqli_fetch_array($result))
+			foreach($result as $row)
 				  {
-				   $output .= '
+					  if ($row['seen']==0)
+					  $count=$count+1;
+
+				   $output =$output. "
 				   <li>
-				    <a href="#">
-				     <strong>'.$row["forUserId"].'</strong><br />
+				    <a href='#'>
+				     <strong>".$row['forUserId']."</strong><br />
 				     <small><em>Accept or deny</em></small>
 				    </a>
 				   </li>
-				   <li class="divider"></li>
-				   ';
+				   <li class='divider'></li>
+				   ";
 				  }
 		}
 		else
 		{
-			return $output.='<li><a href="#" class="text-bold text-italic">No Notification Found</a></li>';
+			return $output=$output."<li><a class='text-bold text-italic'>No Notification Found</a></li>";
 		}
-		$query_1 = "SELECT * FROM notifications WHERE userReqIdFrind=$userid  and seen=0
-         order by dateCurrent DESC";
-		 $result_1 = $this->conn->query($query);
-		 $count = $result_1 ->num_rows;
-		 $data = array(
-		  'notification'   => $output,
-		  'unseen_notification' => $count
-		 );
+		$data=[];
+		$data['notification']=$output;
+		$data['unseen_notification']=$count;
+		
 		 return $data;
   }
 

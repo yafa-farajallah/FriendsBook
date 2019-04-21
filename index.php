@@ -108,10 +108,12 @@ if(isset($_SESSION['userId'])){
      
       <ul class="nav navbar-nav navbar-right">
         <li class="dropdown">
-          <a href="#" class="dropdown-toggle" data-toggle="dropdown" style="font-size:18px; color:white;">
+          <a id="notification" class="dropdown-toggle"  data-toggle="dropdown" style=" cursor:pointer; font-size:18px; color:white;">
             <span class="label label-pill label-danger count count1" style="border-radius:10px;"></span>
             Notification</a>
-          <ul class="dropdown-menu noti"></ul>
+          <ul  id="noti" class="dropdown-menu ">
+          <?php $db->get_notification($userid); ?>
+           </ul>
         </li>
           
         <li >
@@ -297,22 +299,20 @@ function add_comment(postId)
 function load_unseen_notification(view='')
        {
 
-          
-           $.ajax({
-           url:"notification.php",
-           method:"POST",
-           data:{view:view},
+        
+        jQuery.ajax({
+           url:"notification.php?view="+view,
+           method:"GET",
            dataType:"json",
   
            success:function(data)
            
                {
-
                   var response = $.parseJSON(data);
                   var notification =response.notification;
                   var unseen_notification =response.unseen_notification;
-                  //console.log(notification);
-                  $('.noti').html(notification);
+                  
+                  $('#noti').html(notification);
                   if(unseen_notification >0)
                   {
                    $('.count1').html(unseen_notification);
@@ -333,8 +333,6 @@ function add_friends_req(friendId)
          success:function(friend) {
          $("#"+friendId).html("Request Send");
           load_unseen_notification();
-
-        
          }
     });
 }
@@ -347,8 +345,6 @@ $(document).ready(function() {
     
       var postId=$(this).parents(".post-panel").attr('id');
        add_like(postId); 
-
-      
        });
 
        $(".COMMENTS").click(function() {
@@ -382,11 +378,12 @@ $(document).ready(function() {
        });
 
      
+       $("#notification").click(function(event) {
+        $('.count1').html('');
+      load_unseen_notification('yes');      
+         });
 
-      $(document).on('click', '.noti', function(){
-      $('.count1').html('');
-      load_unseen_notification('yes');
-      });
+  
  
       setInterval(function(){ 
       load_unseen_notification();; 
