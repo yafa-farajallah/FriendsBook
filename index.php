@@ -160,8 +160,8 @@ $posts=$db->my_friends_posts($userid);
           <div class="btn-group pull-right postbtn">
             <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
             <ul class="dropdown-menu pull-right" role="menu">
-              <li><a href="javascript:void(0)">Edit Post</a></li>
-              <li><a style="cursor:pointer;" id="delete_post" >Delete Post</a></li>
+              <li><a style="cursor:pointer;" class="edit_post">Edit Post</a></li>
+              <li><a style="cursor:pointer;" class="delete_post" >Delete Post</a></li>
             </ul>
           </div>
           <div class="col-md-12">
@@ -332,6 +332,21 @@ function add_friends_req(friendId)
 }
 
 function delete_post(postId)
+{
+  jQuery.ajax({
+        type: "GET",
+        url: "delete_post.php?postId="+postId,
+        
+         success:function(data) {
+           alert(data);
+           $('#'+postId).remove();
+        
+         }
+    });
+
+}
+
+function edit_post(postId)
 {console.log("add friend button clicked on friend id ");
   jQuery.ajax({
         type: "GET",
@@ -393,9 +408,9 @@ $(document).ready(function() {
     load_unseen_notification('yes');      
       });
 
-    $("#delete_post").click(function(event) {
-      console.log("add friend button clicked on friend id ");
+    $(".delete_post").click(function(event) {
       var postId=$(this).parents(".post-panel").attr('id');
+      console.log(postId);
       delete_post(postId);      
        
       });  
