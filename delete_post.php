@@ -24,10 +24,10 @@
         $del3=$db->InsertData($delete_post);
 
         if($del3)
-            echo "deleted sussesfully";
+            echo 0;
             else
-            echo "there is a problem in deletion";
+            echo 1;
     }
      else 
-     echo "you dont have permission";       
+     echo 2;       
 ?>
