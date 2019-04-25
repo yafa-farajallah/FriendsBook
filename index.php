@@ -70,11 +70,7 @@ function DoAction($action)
 session_start();
 if(isset($_SESSION['userId'])){
   $userid=$_SESSION['userId'];
-  $query ="SELECT * FROM userac where userId=$userid";
-  $result=$db->SelectData($query);
-  $user=mysqli_fetch_array($result);
-  $firstName=$user[3];
-  $lastName=$user[4];
+  $name=$db->FullName($userid);
 ?>
 <!DOCTYPE html>
 <html>
@@ -99,7 +95,7 @@ if(isset($_SESSION['userId'])){
     <div  class="collapse navbar-collapse navbar-fixed-top pink " id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="media-object"></li>
-        <li ><a style="color: white; padding-right: 0px;"href="profile.php"><?php echo $firstName." ".$lastName ?></a></li>
+        <li ><a style="color: white; padding-right: 0px;"href="profile.php"><?php echo $name ?></a></li>
         <li ><a style="color: white;margin-left: 20px;"href="index.php">Home Page</a></li>
         
         
@@ -160,7 +156,7 @@ $posts=$db->my_friends_posts($userid);
           <div class="btn-group pull-right postbtn">
             <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
             <ul class="dropdown-menu pull-right" role="menu">
-              <li><a style="cursor:pointer;" class="edit_post">Edit Post</a></li>
+              <li><a href="edit_post.php?postId=<?php echo $postId;?>"  style="cursor:pointer;" class="edit_post">Edit Post</a></li>
               <li><a style="cursor:pointer;" class="delete_post" >Delete Post</a></li>
             </ul>
           </div>
@@ -301,15 +297,12 @@ function load_unseen_notification(view='')
   jQuery.ajax({
       url:"notification.php?view="+view,
       method:"GET",
-      //dataType:"json",
-
       success:function(data)
       {
         var response = $.parseJSON(data);
         console.log(response);
         var notification =response.notification;
-        var unseen_notification =response.unseen_notification;
-        
+        var unseen_notification =response.unseen_notification;       
         $('#notification_menu').html(notification);
         if(unseen_notification >0)
         {
@@ -323,7 +316,6 @@ function add_friends_req(friendId)
     jQuery.ajax({
         type: "GET",
         url: "addfriends.php?friendid="+friendId,
-        
          success:function(friend) {
          $("#"+friendId).html("Request Send");
           load_unseen_notification();
@@ -346,18 +338,16 @@ function delete_post(postId)
              
          }
     });
-
 }
 
-function edit_post(postId)
-{console.log("add friend button clicked on friend id ");
+function edit_post(postId){
   jQuery.ajax({
         type: "GET",
-        url: "delete_post.php?postId="+postId,
-        
+        url: "post_template.php?postId="+postId,
          success:function(data) {
            alert(data);
-           $('#'+postId).remove();
+           //alert($('#'+postId).html());
+           //$('#'+postId).remove();
         
          }
     });
@@ -419,6 +409,12 @@ $(document).ready(function() {
       });  
 
 
+      /*$(".edit_post").click(function(event) {
+      var postId=$(this).parents(".post-panel").attr('id');
+      console.log(postId);
+      edit_post(postId);      
+       
+      });*/  
 
     setInterval(function(){ 
     load_unseen_notification();; 

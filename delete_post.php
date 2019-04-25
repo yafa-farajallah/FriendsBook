@@ -25,7 +25,7 @@
 
         if($del3)
             echo 0;
-            else
+        else
             echo 1;
     }
      else 
