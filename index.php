@@ -4,7 +4,6 @@ if (isset($_GET['action']))
 {
   DoAction($_GET['action']);
 }
-
 function DoAction($action)
 {  global $db;
    $connection=$db->conn;
@@ -17,7 +16,6 @@ function DoAction($action)
     $query ="SELECT userId FROM userac where username='$username' and password='$password'";
     $result=$db->SelectData($query);
     $user=mysqli_fetch_array($result);
-
     if ($user)
     {
       $_SESSION['userId'] = $user[0];
@@ -29,7 +27,6 @@ function DoAction($action)
       }
       break;
     }
-
     case 'register':{ 
       $username=$connection->real_escape_string($_POST['username']);
       $password=$connection->real_escape_string($_POST['password']);
@@ -55,13 +52,10 @@ function DoAction($action)
       }
       break;
       }
-
     case 'logout':{
       session_start();
-
       if(isset($_SESSION['userId']))
         unset($_SESSION['userId']);
-
       header("location:login.php");
               break;
     }
@@ -70,19 +64,15 @@ function DoAction($action)
 session_start();
 if(isset($_SESSION['userId'])){
   $userid=$_SESSION['userId'];
-  $query ="SELECT * FROM userac where userId=$userid";
-  $result=$db->SelectData($query);
-  $user=mysqli_fetch_array($result);
-  $firstName=$user[3];
-  $lastName=$user[4];
+  $name=$db->FullName($userid);
 ?>
 <!DOCTYPE html>
 <html>
 <head>
-	<title>FriendsWorld</title>
+  <title>FriendsWorld</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<link rel="icon" href="images/caticon.png">
-	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <link rel="icon" href="images/caticon.png">
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
@@ -90,8 +80,8 @@ if(isset($_SESSION['userId'])){
   </head>
 <body>
 
-	
-	<nav class=" navbar navbar-default ">
+  
+  <nav class=" navbar navbar-default ">
   <div  class="container-fluid ">
     
 
@@ -99,7 +89,7 @@ if(isset($_SESSION['userId'])){
     <div  class="collapse navbar-collapse navbar-fixed-top pink " id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
         <li><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="media-object"></li>
-        <li ><a style="color: white; padding-right: 0px;"href="profile.php"><?php echo $firstName." ".$lastName ?></a></li>
+        <li ><a style="color: white; padding-right: 0px;"href="profile.php"><?php echo $name ?></a></li>
         <li ><a style="color: white;margin-left: 20px;"href="index.php">Home Page</a></li>
         
         
@@ -111,7 +101,7 @@ if(isset($_SESSION['userId'])){
           <a id="notification" class="dropdown-toggle"  data-toggle="dropdown" style=" cursor:pointer; font-size:18px; color:white;">
             <span class="label label-pill label-danger count notification_count" style="border-radius:10px;"></span>
             Notification</a>
-          <ul  id="notification_menu" class="dropdown-menu ">
+          <ul  id="notification_menu" class="dropdown-menu " role="navigation" aria-labelledby="dLabel">
           <?php $db->get_notification($userid); ?>
            </ul>
         </li>
@@ -130,7 +120,7 @@ if(isset($_SESSION['userId'])){
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
-	<div class="container">
+  <div class="container">
 <div class="row">
 <div class="col-md-9 col-sm-12 pull-left posttimeline">
         <div class="panel panel-default">
@@ -160,7 +150,7 @@ $posts=$db->my_friends_posts($userid);
           <div class="btn-group pull-right postbtn">
             <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
             <ul class="dropdown-menu pull-right" role="menu">
-              <li><a style="cursor:pointer;" class="edit_post">Edit Post</a></li>
+              <li><a href="edit_post.php?postId=<?php echo $postId;?>"  style="cursor:pointer;" class="edit_post">Edit Post</a></li>
               <li><a style="cursor:pointer;" class="delete_post" >Delete Post</a></li>
             </ul>
           </div>
@@ -176,7 +166,6 @@ $posts=$db->my_friends_posts($userid);
                 <p><?php echo $row['postText']; ?> </p>
                 <?php  
                 
-
                 $Nlikes=$db->count_likes($postId);
                 $Ncomments=$db->count_comments($postId);
                 $like_color=$db->like_color($postId,$userid);
@@ -259,14 +248,12 @@ $posts=$db->my_friends_posts($userid);
 
         </div>
         </div>
-	
+  
 </div>
 </div>
 <?php
-
 ?>
 <script type="text/javascript">
-
 function add_like(postId)
 {
     jQuery.ajax({
@@ -280,7 +267,6 @@ function add_like(postId)
          }
     });
 }
-
 function add_comment(postId)
 {
     jQuery.ajax({
@@ -301,15 +287,12 @@ function load_unseen_notification(view='')
   jQuery.ajax({
       url:"notification.php?view="+view,
       method:"GET",
-      //dataType:"json",
-
       success:function(data)
       {
         var response = $.parseJSON(data);
         console.log(response);
         var notification =response.notification;
-        var unseen_notification =response.unseen_notification;
-        
+        var unseen_notification =response.unseen_notification;       
         $('#notification_menu').html(notification);
         if(unseen_notification >0)
         {
@@ -323,14 +306,34 @@ function add_friends_req(friendId)
     jQuery.ajax({
         type: "GET",
         url: "addfriends.php?friendid="+friendId,
-        
          success:function(friend) {
          $("#"+friendId).html("Request Send");
           load_unseen_notification();
          }
     });
 }
-
+function accept_friend(senderId)
+{   
+    jQuery.ajax({
+        type: "GET",
+        url: "addfriends.php?&status=accept&senderId="+senderId,
+         success:function(friend) {
+          $('#'+senderId).remove();
+          load_unseen_notification();
+         }
+    });
+}
+function denay_friend(senderId)
+{
+    jQuery.ajax({
+        type: "GET",
+        url: "addfriends.php?&status=denay&senderId="+senderId,
+         success:function(friend) {
+          $('#'+senderId).remove();
+          load_unseen_notification();
+         }
+    });
+}
 function delete_post(postId)
 {
   jQuery.ajax({
@@ -338,46 +341,22 @@ function delete_post(postId)
         url: "delete_post.php?postId="+postId,
         
          success:function(data) {
-          if(data !== 'you dont have permission')
-           {
-           $('#'+postId).remove();
-           }
-           alert(data);
-           
-         }
-    });
-
-}
-
-function edit_post(postId)
-{console.log("add friend button clicked on friend id ");
-  jQuery.ajax({
-        type: "GET",
-        url: "delete_post.php?postId="+postId,
-        
-         success:function(data) {
-          if (data ==! 2){
-                       $('#'+postId).remove();}
+          
+           if (data ==! 2){
+             $('#'+postId).remove();}
              else
              alert("you dont have permission to delete this post");
              
-        
          }
     });
-
 }
-
-
-
 $(document).ready(function() {
   load_unseen_notification();
-
     $(".LIKES").click(function() {
   
       var postId=$(this).parents(".post-panel").attr('id');
       add_like(postId); 
       });
-
       $(".COMMENTS").click(function() {
         //var postId = $(this).parents("ul").find('.LIKES').attr('id');
         var postId = $(this).parents(".post-panel").attr('id');
@@ -385,20 +364,16 @@ $(document).ready(function() {
         //console.log("comment added "+($(this).attr('id')));
           
     });
-
   $(".commentbtn").click(function() {
     var postId=$(this).parents(".post-panel").attr('id');
     //console.log("comment button clicked on post id " + postId);
     add_comment(postId); 
     //console.log("comment added");
     $("#"+postId+ " .add-comment-form textarea").val('');
-
     return false;
     
       });  
-
     
-
       $(".addfriend").click(function(event) {
       
     var friendId=$(this).attr('id');
@@ -407,32 +382,38 @@ $(document).ready(function() {
     
       return false; 
       });
-
+      $(".accept").click(function(event) {
+        event.preventDefault();
+        alert("senderId");
+      var senderId=$(this).parents(".acceptFriend").attr('id');
+        accept_friend(senderId);
+        return false; 
+        });  
+        $(".denay").click(function(event) {
+      
+      var senderId=$(this).parents(".acceptFriend").attr('id');
+        denay_friend(senderId);
+        return false; 
+        });  
+  
     
     $("#notification").click(function(event) {
     $('.notification_count').html('');
     load_unseen_notification('yes');      
       });
-
     $(".delete_post").click(function(event) {
       var postId=$(this).parents(".post-panel").attr('id');
       console.log(postId);
       delete_post(postId);      
        
       });  
-
-
-
     setInterval(function(){ 
-    load_unseen_notification();; 
+    load_unseen_notification();
+    
       }, 5000);
  
 });
-
       
-
-
-
   </script>
 </body>
 </html>
@@ -440,6 +421,6 @@ $(document).ready(function() {
 <?php
 }
 else{
-	header("location:login.php?loginStatus=notlogin");
+  header("location:login.php?loginStatus=notlogin");
 }
 ?>
