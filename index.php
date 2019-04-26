@@ -338,9 +338,12 @@ function delete_post(postId)
         url: "delete_post.php?postId="+postId,
         
          success:function(data) {
-           alert(data);
+          if(data !== 'you dont have permission')
+           {
            $('#'+postId).remove();
-        
+           }
+           alert(data);
+           
          }
     });
 
@@ -353,8 +356,11 @@ function edit_post(postId)
         url: "delete_post.php?postId="+postId,
         
          success:function(data) {
-           alert(data);
-           $('#'+postId).remove();
+          if (data ==! 2){
+                       $('#'+postId).remove();}
+             else
+             alert("you dont have permission to delete this post");
+             
         
          }
     });
