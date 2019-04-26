@@ -164,6 +164,16 @@ COMMENT_HTML;
 		return $this->InsertData($query);
 	}
 
+	public function accept_request($senderId,$userId){
+		$query="INSERT INTO `friendship`( `userId`, `userId2`, `dateCurrent`) VALUES ($senderId,$userId,curTime())";
+		return $this->InsertData($query);	
+	}
+
+	public function remove_notification($senderId,$userId){
+		$query="DELETE FROM `notifications` WHERE `forUserId`=$senderId and `userReqIdFrind`=$userId";
+		$done= $this->InsertData($query);	
+	}
+	
   public function get_notification($userid)
   {
   	$query="SELECT * FROM notifications WHERE userReqIdFrind=$userid  
@@ -177,12 +187,30 @@ COMMENT_HTML;
 				  {
 					  if ($row['seen']==0)
 					  $count=$count+1;
-
+					$senderId=$row['forUserId'];  
+                   $senderName=$this->FullName($senderId);
 				   $output =$output. "
-				   <li>
-				    <a href='#'>
-				     <strong>".$row['forUserId']."</strong><br />
-				     <small><em>Accept or deny</em></small>
+				   <li id='$senderId' class='acceptFriend'>
+				    <a>
+				     <strong>".$senderName." send a friend request</strong><br />
+					 <small><em>
+					   <button class='accept'
+					   class='btn btn--radius-2 btn--blue addfriend' style=' margin-left: 10px;
+					   margin-right: 10px;
+					   background-color: #de41b0;
+					   color:white; 
+					   margin-top:10px;
+					  '
+								name='Accept'>Accept</button>
+						<button class='denay'
+						class='btn btn--radius-2 btn--blue addfriend' style=' margin-left: 10px;
+						margin-right: 10px;
+						background-color: #de41b0;
+						color:white; 
+						margin-top:10px;
+						'
+									name='Denay'>Denay</button>		
+					 </em></small>
 				    </a>
 				   </li>
 				   <li class='divider'></li>

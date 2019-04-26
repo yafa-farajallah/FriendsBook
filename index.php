@@ -107,7 +107,7 @@ if(isset($_SESSION['userId'])){
           <a id="notification" class="dropdown-toggle"  data-toggle="dropdown" style=" cursor:pointer; font-size:18px; color:white;">
             <span class="label label-pill label-danger count notification_count" style="border-radius:10px;"></span>
             Notification</a>
-          <ul  id="notification_menu" class="dropdown-menu ">
+          <ul  id="notification_menu" class="dropdown-menu " role="navigation" aria-labelledby="dLabel">
           <?php $db->get_notification($userid); ?>
            </ul>
         </li>
@@ -323,6 +323,32 @@ function add_friends_req(friendId)
     });
 }
 
+function accept_friend(senderId)
+{   
+    jQuery.ajax({
+        type: "GET",
+        url: "addfriends.php?&status=accept&senderId="+senderId,
+         success:function(friend) {
+          $('#'+senderId).remove();
+          load_unseen_notification();
+         }
+    });
+}
+
+function denay_friend(senderId)
+{
+    jQuery.ajax({
+        type: "GET",
+        url: "addfriends.php?&status=denay&senderId="+senderId,
+         success:function(friend) {
+          $('#'+senderId).remove();
+          load_unseen_notification();
+         }
+    });
+}
+
+
+
 function delete_post(postId)
 {
   jQuery.ajax({
@@ -339,22 +365,6 @@ function delete_post(postId)
          }
     });
 }
-
-function edit_post(postId){
-  jQuery.ajax({
-        type: "GET",
-        url: "post_template.php?postId="+postId,
-         success:function(data) {
-           alert(data);
-           //alert($('#'+postId).html());
-           //$('#'+postId).remove();
-        
-         }
-    });
-
-}
-
-
 
 $(document).ready(function() {
   load_unseen_notification();
@@ -395,6 +405,22 @@ $(document).ready(function() {
       return false; 
       });
 
+      $(".accept").click(function(event) {
+        event.preventDefault();
+        alert("senderId");
+      var senderId=$(this).parents(".acceptFriend").attr('id');
+        accept_friend(senderId);
+        return false; 
+        });  
+
+        $(".denay").click(function(event) {
+      
+      var senderId=$(this).parents(".acceptFriend").attr('id');
+        denay_friend(senderId);
+        return false; 
+        });  
+  
+
     
     $("#notification").click(function(event) {
     $('.notification_count').html('');
@@ -408,16 +434,9 @@ $(document).ready(function() {
        
       });  
 
-
-      /*$(".edit_post").click(function(event) {
-      var postId=$(this).parents(".post-panel").attr('id');
-      console.log(postId);
-      edit_post(postId);      
-       
-      });*/  
-
     setInterval(function(){ 
-    load_unseen_notification();; 
+    load_unseen_notification();
+    
       }, 5000);
  
 });
