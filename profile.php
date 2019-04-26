@@ -85,6 +85,16 @@ if(isset($_SESSION['userId'])){
               </li>
               
             </ul>
+            <ul class="nav nav-pills pull-right countlist" role="tablist">
+              <li>
+                
+                        <form action="upload.php" method="post" enctype="multipart/form-data">
+            change your profile picture:
+            <input type="file" name="fileToUpload" id="fileToUpload">
+            <input type="submit" value="Upload Image" name="submit">
+        </form>
+                      </li>
+            </ul>
           </div>
           <div class="clearfix"></div>
         </div>

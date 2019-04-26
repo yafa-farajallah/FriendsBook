@@ -126,12 +126,13 @@ if(isset($_SESSION['userId'])){
         <div class="panel panel-default">
           <div class="panel-body">
             <div class="status-upload nopaddingbtm">
-              <form action="post.php?page=index.php" method="post">
+              <form action="post.php?page=index.php" method="post" enctype="multipart/form-data">
                 <input type="textarea" class="form-control" name="post"  placeholder="What are you doing right now?">
                 <br>
                 <ul class="nav nav-pills pull-left ">
                  
-                  <li><a style="color: #de41b0;"title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Picture"><i class="glyphicon glyphicon-picture"></i></a></li>
+                  <li><a style="color: #de41b0;"title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Picture"> <input type="file" name="fileToUpload" id="fileToUpload" value="choose image">
+                </a></li>
                 </ul>
                 <input type="submit" name="share" value="Share" style="background-color:  #de41b0;border-color:#de41b0;"type="submit" class="btn btn-success pull-right">
               </form>
@@ -408,7 +409,7 @@ $(document).ready(function() {
        
       });  
     setInterval(function(){ 
-    load_unseen_notification();
+   load_unseen_notification();
     
       }, 5000);
  
