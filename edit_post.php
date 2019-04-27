@@ -82,14 +82,14 @@ $query="SELECT  * FROM `posts` WHERE `postId`=$postId";
 </nav>
 	<div class="container">
 <div class="row">
-<div class="col-md-9 col-sm-12 pull-left posttimeline">
-        <div class="panel panel-default">
-          <div class="panel-body">
+<div class="col-md-7 col-sm-12 pull-center posttimeline ">
+        <div class="panel panel-default" >
+          <div class="panel-body" >
             <div class="status-upload nopaddingbtm">
               <form action="<?php echo $form_submit?>" method="post">
-                <textarea name="post" class="form-control" ><?php echo $text?></textarea>
+                <textarea style="height:100px;" name="post" class="form-control" ><?php echo $text?></textarea>
                 <br>
-                <ul class="nav nav-pills pull-left ">
+                <ul class="nav nav-pills pull-center ">
                  
                   <li><a style="color: #de41b0;"title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Picture"><i class="glyphicon glyphicon-picture"></i></a></li>
                 </ul>

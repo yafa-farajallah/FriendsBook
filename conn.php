@@ -147,7 +147,7 @@ COMMENT_HTML;
 	   }
 	    public function get_not_friends($userid){
 		return $this->SelectData("SELECT userId,firstName,lastName FROM userac
-		 where userId not in (SELECT userId2 FROM friendship where userId =$userid)");
+		 where userId not in (SELECT userId2 FROM friendship where userId =$userid) and userId!=$userid");
 	}
 
  	public function request_status($userId,$notfriendId){
@@ -194,16 +194,16 @@ COMMENT_HTML;
 				    <a>
 				     <strong>".$senderName." send a friend request</strong><br />
 					 <small><em>
-					   <button class='accept'
-					   class='btn btn--radius-2 btn--blue addfriend' style=' margin-left: 10px;
+					   <button 
+					   class='accept btn btn--radius-2 btn--blue addfriend' style=' margin-left: 10px;
 					   margin-right: 10px;
 					   background-color: #de41b0;
 					   color:white; 
 					   margin-top:10px;
 					  '
 								name='Accept'>Accept</button>
-						<button class='denay'
-						class='btn btn--radius-2 btn--blue addfriend' style=' margin-left: 10px;
+						<button 
+						class='denay btn btn--radius-2 btn--blue addfriend' style=' margin-left: 10px;
 						margin-right: 10px;
 						background-color: #de41b0;
 						color:white; 
@@ -221,11 +221,7 @@ COMMENT_HTML;
 		{
 			$output=$output."<li><a class='text-bold text-italic'>No Notification Found</a></li>";
 		}
-		$data=[];
-		$data['notification']=$output;
-		$data['unseen_notification']=$count;
-		
-		 return $data;
+		 return [$output,$count];
   }
 
 }

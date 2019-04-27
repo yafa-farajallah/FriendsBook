@@ -178,6 +178,11 @@
   display: none;
 }
 
+#notification:onclick{
+  background-color: #eb3147;
+
+}
+
 .comment {
   display: flex;
   align-items: center;
