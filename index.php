@@ -4,7 +4,6 @@ if (isset($_GET['action']))
 {
   DoAction($_GET['action']);
 }
-
 function DoAction($action)
 {  global $db;
    $connection=$db->conn;
@@ -17,7 +16,6 @@ function DoAction($action)
     $query ="SELECT userId FROM userac where username='$username' and password='$password'";
     $result=$db->SelectData($query);
     $user=mysqli_fetch_array($result);
-
     if ($user)
     {
       $_SESSION['userId'] = $user[0];
@@ -29,7 +27,6 @@ function DoAction($action)
       }
       break;
     }
-
     case 'register':{ 
       $username=$connection->real_escape_string($_POST['username']);
       $password=$connection->real_escape_string($_POST['password']);
@@ -55,13 +52,10 @@ function DoAction($action)
       }
       break;
       }
-
     case 'logout':{
       session_start();
-
       if(isset($_SESSION['userId']))
         unset($_SESSION['userId']);
-
       header("location:login.php");
               break;
     }
@@ -75,10 +69,10 @@ if(isset($_SESSION['userId'])){
 <!DOCTYPE html>
 <html>
 <head>
-	<title>FriendsWorld</title>
+  <title>FriendsWorld</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-	<link rel="icon" href="images/caticon.png">
-	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+  <link rel="icon" href="images/caticon.png">
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
   <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
   <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
   <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet">
@@ -86,8 +80,8 @@ if(isset($_SESSION['userId'])){
   </head>
 <body>
 
-	
-	<nav class=" navbar navbar-default ">
+  
+  <nav class=" navbar navbar-default ">
   <div  class="container-fluid ">
     
 
@@ -125,18 +119,19 @@ if(isset($_SESSION['userId'])){
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
-	<div class="container">
+  <div class="container">
 <div class="row">
 <div class="col-md-9 col-sm-12 pull-left posttimeline">
         <div class="panel panel-default">
           <div class="panel-body">
             <div class="status-upload nopaddingbtm">
-              <form action="post.php?page=index.php" method="post">
+              <form action="post.php?page=index.php" method="post" enctype="multipart/form-data">
                 <input type="textarea" class="form-control" name="post"  placeholder="What are you doing right now?">
                 <br>
                 <ul class="nav nav-pills pull-left ">
                  
-                  <li><a style="color: #de41b0;"title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Picture"><i class="glyphicon glyphicon-picture"></i></a></li>
+                  <li><a style="color: #de41b0;"title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Picture"> <input type="file" name="fileToUpload" id="fileToUpload" value="choose image">
+                </a></li>
                 </ul>
                 <input type="submit" name="share" value="Share" style="background-color:  #de41b0;border-color:#de41b0;"type="submit" class="btn btn-success pull-right">
               </form>
@@ -171,7 +166,6 @@ $posts=$db->my_friends_posts($userid);
                 <p><?php echo $row['postText']; ?> </p>
                 <?php  
                 
-
                 $Nlikes=$db->count_likes($postId);
                 $Ncomments=$db->count_comments($postId);
                 $like_color=$db->like_color($postId,$userid);
@@ -254,15 +248,178 @@ $posts=$db->my_friends_posts($userid);
 
         </div>
         </div>
-	
+  
 </div>
 </div>
 <?php
-
 ?>
+<<<<<<< HEAD
 <script src="main.js">
 
 
+=======
+<script type="text/javascript">
+function add_like(postId)
+{
+    jQuery.ajax({
+        type: "GET",
+        url: "like.php?postid="+postId,
+        success: function(data1) {
+          var response = $.parseJSON(data1);
+           console.log(data1);
+           $("#"+postId+ " .num-likes").html(response.no_likes);
+           $("#"+postId+ " .like_color").css("color",response.color);
+         }
+    });
+}
+function add_comment(postId)
+{
+    jQuery.ajax({
+        type: "POST",
+        url: "comment.php?postId="+postId,
+        data: jQuery("#"+postId+" .add-comment-form").serialize(),
+         success:function(data) {
+          var responce = $.parseJSON(data);
+          var Ncomments=responce.no_comments; 
+          $("#"+postId+ " .num-comments").html(Ncomments);
+          $("#"+postId+" .comments-area").prepend(responce.comment_html);
+         //console.log("successed"+Ncomments+"#form"+postId); 
+         }
+    });
+}
+function load_unseen_notification(view='')
+{
+  jQuery.ajax({
+      url:"notification.php?view="+view,
+      method:"GET",
+      success:function(data)
+      {
+        var response = $.parseJSON(data);
+        console.log(response);
+        var notification =response.notification;
+        var unseen_notification =response.unseen_notification;       
+        $('#notification_menu').html(notification);
+        if(unseen_notification >0)
+        {
+          $('.notification_count').html(unseen_notification);
+        }
+      }  
+    });
+}
+function add_friends_req(friendId)
+{
+    jQuery.ajax({
+        type: "GET",
+        url: "addfriends.php?friendid="+friendId,
+         success:function(friend) {
+         $("#"+friendId).html("Request Send");
+          load_unseen_notification();
+         }
+    });
+}
+function accept_friend(senderId)
+{   
+    jQuery.ajax({
+        type: "GET",
+        url: "addfriends.php?&status=accept&senderId="+senderId,
+         success:function(friend) {
+          $('#'+senderId).remove();
+          load_unseen_notification();
+         }
+    });
+}
+function denay_friend(senderId)
+{
+    jQuery.ajax({
+        type: "GET",
+        url: "addfriends.php?&status=denay&senderId="+senderId,
+         success:function(friend) {
+          $('#'+senderId).remove();
+          load_unseen_notification();
+         }
+    });
+}
+function delete_post(postId)
+{
+  jQuery.ajax({
+        type: "GET",
+        url: "delete_post.php?postId="+postId,
+        
+         success:function(data) {
+          
+           if (data ==! 2){
+             $('#'+postId).remove();}
+             else
+             alert("you dont have permission to delete this post");
+             
+         }
+    });
+}
+$(document).ready(function() {
+  load_unseen_notification();
+    $(".LIKES").click(function() {
+  
+      var postId=$(this).parents(".post-panel").attr('id');
+      add_like(postId); 
+      });
+      $(".COMMENTS").click(function() {
+        //var postId = $(this).parents("ul").find('.LIKES').attr('id');
+        var postId = $(this).parents(".post-panel").attr('id');
+        $("#" + postId+" .comments-area").fadeIn();
+        //console.log("comment added "+($(this).attr('id')));
+          
+    });
+  $(".commentbtn").click(function() {
+    var postId=$(this).parents(".post-panel").attr('id');
+    //console.log("comment button clicked on post id " + postId);
+    add_comment(postId); 
+    //console.log("comment added");
+    $("#"+postId+ " .add-comment-form textarea").val('');
+    return false;
+    
+      });  
+    
+      $(".addfriend").click(function(event) {
+      
+    var friendId=$(this).attr('id');
+    //console.log("add friend button clicked on friend id " + friendId);
+      add_friends_req(friendId);
+    
+      return false; 
+      });
+      $(".accept").click(function(event) {
+        event.preventDefault();
+        alert("senderId");
+      var senderId=$(this).parents(".acceptFriend").attr('id');
+        accept_friend(senderId);
+        return false; 
+        });  
+        $(".denay").click(function(event) {
+      
+      var senderId=$(this).parents(".acceptFriend").attr('id');
+        denay_friend(senderId);
+        return false; 
+        });  
+  
+    
+    $("#notification").click(function(event) {
+    $('.notification_count').html('');
+    load_unseen_notification('yes');      
+      });
+    $(".delete_post").click(function(event) {
+      var postId=$(this).parents(".post-panel").attr('id');
+      console.log(postId);
+      delete_post(postId);      
+       
+      });  
+    setInterval(function(){ 
+   load_unseen_notification();
+    
+      }, 5000);
+ 
+});
+      
+>>>>>>> 99d25250528f0bafd43badf4bb5c1544e4241957
   </script>
 </body>
 </html>
@@ -270,6 +427,6 @@ $posts=$db->my_friends_posts($userid);
 <?php
 }
 else{
-	header("location:login.php?loginStatus=notlogin");
+  header("location:login.php?loginStatus=notlogin");
 }
 ?>
