@@ -1,4 +1,7 @@
 <?php
+session_start();
+require('conn.php');
+$userId=$_SESSION['userId'];
 $target_dir = "uploads/";
 $target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
 $uploadOk = 1;
@@ -37,6 +40,7 @@ if ($uploadOk == 0) {
 } else {
     if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
         echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
+     echo $target_file;
     } else {
         echo "Sorry, there was an error uploading your file.";
     }
@@ -44,9 +48,9 @@ if ($uploadOk == 0) {
     
 }
 
- // $query = "UPDATE userac SET imageUrl='$target_file' WHERE  userId=$GET['userid']";
-//if ($db->InsertData($query))
-   //           header("location:profile.php");        
+  $query = "UPDATE userac SET imageUrl='$target_file' WHERE  userId=$userId";
+   if ($db->InsertData($query)) 
+      header("location:profile.php");        
 
 
 ?>

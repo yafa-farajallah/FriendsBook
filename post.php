@@ -22,7 +22,7 @@ require('conn.php');
 			// Check if file already exists
 			if (file_exists($target_file)) {
 			    echo "Sorry, file already exists.";
-			    $uploadOk = 0;
+			    $uploadOk = 1;
 			}
 			// Check file size
 			if ($_FILES["fileToUpload"]["size"] > 500000) {
@@ -60,11 +60,11 @@ require('conn.php');
 		else
 		{
 			if($uploadOk == 1)
-		  $query = "INSERT INTO posts (userid,postText,dateTimeCurrent,imageUrl)VALUES ('$userId','$post',curTime(),
-			  $target_file)";
+		  $query = "INSERT INTO posts (userid,postText,dateTimeCurrent,imageUrl)VALUES ($userId,'$post',curTime(),
+			  '$target_file')";
 
 		else 
-			$query = "INSERT INTO posts (userid,postText,dateTimeCurrent)VALUES ('$userId','$post',curTime())";
+			$query = "INSERT INTO posts (userid,postText,dateTimeCurrent)VALUES ($userId,'$post',curTime())";
 		}
 		    if ($db->InsertData($query))
 		      header("location:".$page);

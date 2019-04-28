@@ -71,6 +71,25 @@ class DB{
 
 
 	}
+	public function GetImage($userId){
+
+		$result=$this->SelectData("SELECT imageUrl FROM userac WHERE userId=".$userId);
+		$image= mysqli_fetch_assoc($result);
+		return $image['imageUrl'];
+
+
+	}
+
+	public function GetPostImage($postId){
+
+		$result=$this->SelectData("SELECT imageUrl FROM posts WHERE postId=".$postId);
+		$image= mysqli_fetch_assoc($result);
+		return $image['imageUrl'];
+
+
+	}
+
+
 
 	public function get_comment_html($comment) {
 		$comment_template = <<< COMMENT_HTML
