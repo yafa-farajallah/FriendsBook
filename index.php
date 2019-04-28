@@ -65,6 +65,8 @@ session_start();
 if(isset($_SESSION['userId'])){
   $userid=$_SESSION['userId'];
   $name=$db->FullName($userid);
+  $userimage=$db->GetImage($userid);
+
 ?>
 <!DOCTYPE html>
 <html>
@@ -84,11 +86,10 @@ if(isset($_SESSION['userId'])){
   <nav class=" navbar navbar-default ">
   <div  class="container-fluid ">
     
-
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div  class="collapse navbar-collapse navbar-fixed-top pink " id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="media-object"></li>
+        <li><img src="<?php echo $userimage?>" onerror="this.src='uploads/user-icon.png';" class="media-object"></li>
         <li ><a style="color: white; padding-right: 0px;"href="profile.php"><?php echo $name ?></a></li>
         <li ><a style="color: white;margin-left: 20px;"href="index.php">Home Page</a></li>
         
@@ -169,8 +170,11 @@ $posts=$db->my_friends_posts($userid);
                 <h4 class="media-heading"> <?php echo $name ; ?> <br>
                   <small><i class="fa fa-clock-o"></i> <?php echo $row['dateTimeCurrent']; ?> </small> </h4>
                 <p><?php echo $row['postText']; ?> </p>
-                <div><img src="<?php echo $postimage?>"  class="media-object" onerror="this.src='uploads/user-icon.png';"></div>
-                <?php  
+                <div><img src="<?php echo $postimage?>"    style="
+                  padding: 5px;
+                  width: 50% !important ;margin-left: auto;
+                   margin-right: auto; display: block;" ></div>
+                                <?php  
                 
                 $Nlikes=$db->count_likes($postId);
                 $Ncomments=$db->count_comments($postId);
