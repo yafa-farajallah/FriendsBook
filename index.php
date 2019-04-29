@@ -12,7 +12,7 @@ function DoAction($action)
     case 'login':{
     session_start();
     $username = $connection->real_escape_string($_POST['username']);
-    $password = $connection->real_escape_string($_POST['password']);
+    $password = sha1($connection->real_escape_string($_POST['password']));
     $query ="SELECT userId FROM userac where username='$username' and password='$password'";
     $result=$db->SelectData($query);
     $user=mysqli_fetch_array($result);
@@ -29,7 +29,7 @@ function DoAction($action)
     }
     case 'register':{ 
       $username=$connection->real_escape_string($_POST['username']);
-      $password=$connection->real_escape_string($_POST['password']);
+      $password=sha1($connection->real_escape_string($_POST['password']));
       $firstname=$connection->real_escape_string($_POST['firstname']);
       $lastname=$connection->real_escape_string($_POST['lastname']);
       $teleno=$connection->real_escape_string($_POST['teleno']);
