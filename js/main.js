@@ -145,7 +145,6 @@
             $(document).on('click','.accept',function(event) {
               event.preventDefault();
               console.log("senderID");
-              alert("senderId");
             var senderId=$(this).parents(".acceptFriend").attr('id');
               accept_friend(senderId);
               return false; 

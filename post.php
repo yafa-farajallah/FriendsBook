@@ -47,7 +47,7 @@ require('conn.php');
 			}
 		
 		$connection=$db->conn;
-		$post=$connection->real_escape_string($_POST['post']);
+		$post=htmlentities($connection->real_escape_string($_POST['post']));
 		$userId=$_SESSION['userId'];
 		if(isset($_GET['postId']))
 		{

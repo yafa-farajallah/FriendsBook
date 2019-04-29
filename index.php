@@ -11,8 +11,8 @@ function DoAction($action)
    {  
     case 'login':{
     session_start();
-    $username = $connection->real_escape_string($_POST['username']);
-    $password = sha1($connection->real_escape_string($_POST['password']));
+    $username = htmlentities($connection->real_escape_string($_POST['username']));
+    $password = sha1(htmlentities($connection->real_escape_string($_POST['password'])));
     $query ="SELECT userId FROM userac where username='$username' and password='$password'";
     $result=$db->SelectData($query);
     $user=mysqli_fetch_array($result);
@@ -28,14 +28,14 @@ function DoAction($action)
       break;
     }
     case 'register':{ 
-      $username=$connection->real_escape_string($_POST['username']);
-      $password=sha1($connection->real_escape_string($_POST['password']));
-      $firstname=$connection->real_escape_string($_POST['firstname']);
-      $lastname=$connection->real_escape_string($_POST['lastname']);
-      $teleno=$connection->real_escape_string($_POST['teleno']);
-      $email=$connection->real_escape_string($_POST['email']);
-      $gender=$connection->real_escape_string($_POST['gender']);
-      $birthdate=$connection->real_escape_string($_POST['birthdate']);
+      $username=htmlentities($connection->real_escape_string($_POST['username']));
+      $password=htmlentities(sha1($connection->real_escape_string($_POST['password'])));
+      $firstname=htmlentities($connection->real_escape_string($_POST['firstname']));
+      $lastname=htmlentities($connection->real_escape_string($_POST['lastname']));
+      $teleno=htmlentities($connection->real_escape_string($_POST['teleno']));
+      $email=htmlentities($connection->real_escape_string($_POST['email']));
+      $gender=htmlentities($connection->real_escape_string($_POST['gender']));
+      $birthdate=htmlentities($connection->real_escape_string($_POST['birthdate']));
       
       $query = "SELECT userId FROM userac WHERE username='$username'";
       $result=$db->SelectData($query);
