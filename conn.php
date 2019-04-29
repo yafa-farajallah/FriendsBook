@@ -89,13 +89,18 @@ class DB{
 
 	}
 
+  public function MyImages($userid)
+  {
+  $result=$this->SelectData("SELECT imageUrl FROM posts WHERE userId=".$userid." and imageUrl IS NOT NULL");
+		return $result;
 
+  }
 
 	public function get_comment_html($comment) {
 		$comment_template = <<< COMMENT_HTML
 	<div class="comment">
 	<div class="commenter">
-		<img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="media-object" width="30px">
+		<img style="height: 50px;width: 50px;" src="{{userimage}}" onerror="this.src='uploads/user-icon.png';" class="media-object">
 	</div>
     <div  class="commenter" style="color: #de41b0; font-size:17px; ">{{name}}</div>
 
@@ -104,6 +109,7 @@ class DB{
 	</div>
 COMMENT_HTML;
     $comment_html = $comment_template;
+    $comment_html = str_replace("{{userimage}}", $this->GetImage($comment['userId']), $comment_html);
     $comment_html = str_replace("{{name}}", $this->FullName($comment['userId']), $comment_html);
     $comment_html = str_replace("{{comment_text}}", $comment['CommentText'], $comment_html);
     $comment_html = str_replace("{{comment_date}}", $comment['dateCurrent'], $comment_html);
@@ -134,7 +140,7 @@ COMMENT_HTML;
 
 	public function my_friends($userid)
 	{
-	    $friends=$this->SelectData("SELECT firstName,lastName FROM userac WHERE  userid  in 
+	    $friends=$this->SelectData("SELECT userId,firstName,lastName FROM userac WHERE  userid  in 
 	    ( SELECT USERID2 FROM FRIENDSHIP WHERE USERID=$userid) 
          or userid  in ( SELECT USERID FROM FRIENDSHIP WHERE USERID2=$userid) ");
 	    return $friends;
@@ -166,7 +172,9 @@ COMMENT_HTML;
 	   }
 	    public function get_not_friends($userid){
 		return $this->SelectData("SELECT userId,firstName,lastName FROM userac
-		 where userId not in (SELECT userId2 FROM friendship where userId =$userid) and userId!=$userid");
+		 where userId not in (SELECT userId2 FROM friendship where userId =$userid) 
+		 and userId not in (SELECT userId FROM friendship where userId2 =$userid) 
+		 and userId!=$userid");
 	}
 
  	public function request_status($userId,$notfriendId){

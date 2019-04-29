@@ -44,13 +44,9 @@ if ($uploadOk == 0) {
     } else {
         echo "Sorry, there was an error uploading your file.";
     }
-
     
 }
-
   $query = "UPDATE userac SET imageUrl='$target_file' WHERE  userId=$userId";
    if ($db->InsertData($query)) 
       header("location:profile.php");        
-
-
 ?>

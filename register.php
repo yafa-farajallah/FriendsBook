@@ -69,10 +69,10 @@
                         </div>
                         <div class="row row-space">
                             <div class="col-2">
-                                <div class="input-group">
-                                    <label class="label">Birthdate</label>
+                                <div class="input-group ">
+                                    <label class="label ">Birthdate</label>
                                     <div class="input-group-icon">
-                                        <input required class="input--style-4 js-datepicker" type="text" name="birthdate">
+                                        <input  placeholder="yy-mm-dd" type="text" name="birthdate" data-date-formate='yy-mm-dd'>
                                         <i class="zmdi zmdi-calendar-note input-icon js-btn-calendar"></i>
                                     </div>
                                 </div>

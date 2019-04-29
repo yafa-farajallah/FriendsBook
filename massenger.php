@@ -15,8 +15,49 @@
 
     session_start();
     require('conn.php');
+
 $userid=$_SESSION['userId'];
+  $name=$db->FullName($userid);
+  $userimage=$db->GetImage($userid);
 ?>
+  
+  <nav class=" navbar navbar-default ">
+  <div  class="container-fluid ">
+    
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div  class="collapse navbar-collapse navbar-fixed-top pink " id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+        <li><img src="<?php echo $userimage?>" onerror="this.src='uploads/user-icon.png';" class="media-object"></li>
+        <li ><a style="color: white; padding-right: 0px;"href="profile.php"><?php echo $name ?></a></li>
+        <li ><a style="color: white;margin-left: 20px;"href="index.php">Home Page</a></li>
+        
+        
+      </ul>
+     
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a id="notification" class="dropdown-toggle"  data-toggle="dropdown" style=" cursor:pointer; font-size:18px; color:white;">
+            <span class="label label-pill label-danger count notification_count" style="border-radius:10px;"></span>
+            Notification</a>
+          <ul  id="notification_menu" class="dropdown-menu " role="navigation" aria-labelledby="dLabel">
+
+           </ul>
+        </li>
+          
+        <li >
+          <a href="massenger.php"  >
+            <span class="label label-pill label-danger count" style="border-radius:10px;"></span>
+            <span class="glyphicon glyphicon-envelope" style="font-size:18px; color:white;margin-left: 20px;"></span></a>
+          
+        </li>
+
+        <li><img src="images/whiteicon.png" style="margin-top: 12px;margin-left:100px; "></li>
+        <li><a a style="color: white;"href="index.php?action=logout">logout</a></li>
+          
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
 <div class="container">
 <h3 class=" text-center">Messaging</h3>
 <div class="messaging">

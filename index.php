@@ -89,7 +89,7 @@ if(isset($_SESSION['userId'])){
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div  class="collapse navbar-collapse navbar-fixed-top pink " id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
-        <li><img src="<?php echo $userimage?>" onerror="this.src='uploads/user-icon.png';" class="media-object"></li>
+        <li><img style="height: 50px;width: 50px;" src="<?php echo $userimage?>" onerror="this.src='uploads/user-icon.png';" class="media-object"></li>
         <li ><a style="color: white; padding-right: 0px;"href="profile.php"><?php echo $name ?></a></li>
         <li ><a style="color: white;margin-left: 20px;"href="index.php">Home Page</a></li>
         
@@ -131,9 +131,9 @@ if(isset($_SESSION['userId'])){
                 <br>
                 <ul class="nav nav-pills pull-left ">
                  
-                  <li><a style="color: #de41b0;"title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Picture">
-                   <input type="file" name="fileToUpload" id="fileToUpload" value="choose image" class="btn  pull-right" >
-                </a></li>
+                  <li><span style="color: #de41b0;">
+                   <input  type="file" name="fileToUpload" id="fileToUpload" value="choose image" class="btn  pull-right" >
+                </span></li>
                 
                 </ul>
                 <input type="submit" name="share" value="Share" style="background-color:  #de41b0;border-color:#de41b0;"type="submit" class="btn btn-success pull-right">
@@ -153,7 +153,7 @@ $posts=$db->my_friends_posts($userid);
     $postimage=$db->GetPostImage($postId);?>
         <div id="<?php echo $postId ; ?>" class="panel panel-default post-panel">
           <div class="btn-group pull-right postbtn">
-            <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
+            <button type="button" class="dotbtn dropdown-toggle"  data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
             <ul class="dropdown-menu pull-right" role="menu">
               <li><a href="edit_post.php?postId=<?php echo $postId;?>"  style="cursor:pointer;" class="edit_post">Edit Post</a></li>
               <li><a style="cursor:pointer;" class="delete_post" >Delete Post</a></li>
@@ -161,7 +161,7 @@ $posts=$db->my_friends_posts($userid);
           </div>
           <div class="col-md-12">
             <div class="media">
-              <div class="media-left"> <a > <img src="<?php echo $userimage?>"  onerror="this.src='uploads/user-icon.png';" class="media-object" > </a> </div>
+              <div class="media-left"> <a > <img style="height: 50px;width: 50px;" src="<?php echo $userimage?>"  onerror="this.src='uploads/user-icon.png';" class="media-object" > </a> </div>
 
               <div class="media-body">
                 <?php 
@@ -241,19 +241,25 @@ $posts=$db->my_friends_posts($userid);
             foreach($notfriends as $notFriend):{
             $notfriendId=$notFriend['userId'];
             $request_status=$db->request_status($userid,$notfriendId);
+            $color='#de41b0';
+            if($request_status=="Request Sent")
+              $color='#eb8dd0';
             ?>
                 
             <div style="margin-bottom: 10px;margin-top: 3px;margin-left: 10px;" 
-            class="clearfix"> <b style="color: black;"><?php echo $db->FullName($notfriendId); ?> </b>
+            class="clearfix"> <b style="color: black;  font-family: Times New Roman;">
+              <?php echo $db->FullName($notfriendId); ?> </b>
             <button  id="<?php echo $notfriendId; ?>"
-            class="btn btn--radius-2 btn--blue addfriend" style=" margin-left: 10px;
+            class="btn btn--radius-2 btn--blue addfriend"  style=" margin-left: 10px;
               margin-right: 10px;
-              background-color: #de41b0;
               color:white; 
-              float:right;"
+              float:right;
+              width:109px;
+              background-color: <?php echo $color ?>;"
                        
-                      name="addFriends"><?php echo $request_status; ?></button></div>
-         <?php }endforeach; ?>
+                      name="addFriends"><span style="font-family: " serif;">
+                        <?php echo $request_status; ?></span></button></div>
+               <?php }endforeach; ?>
         
 
         </div>

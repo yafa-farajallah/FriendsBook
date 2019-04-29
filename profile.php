@@ -19,7 +19,7 @@ if(isset($_SESSION['userId'])){
     $gender="Female";
   $birthdate=$user[9];
   
-
+$userimage=$db->GetImage($userid);
 ?>
 <head>
   <title>My Profile</title>
@@ -42,7 +42,7 @@ if(isset($_SESSION['userId'])){
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div  class="collapse navbar-collapse navbar-fixed-top pink" id="bs-example-navbar-collapse-1" >
       <ul class="nav navbar-nav ">
-        <li><img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="media-object"></li>
+        <li><img style="height: 50px;width: 50px;"  src="<?php echo $userimage?>" alt="" class="media-object"></li>
         <li ><a style="color: white; padding-right: 0px;"href="profile.php"><?php echo $firstName." ".$lastName ?></a></li>
         <li ><a style="color: white;margin-left: 20px;"href="index.php">Home Page</a></li>
         
@@ -62,7 +62,7 @@ if(isset($_SESSION['userId'])){
       <div class="col-md-12 text-center ">
         <div class="panel panel-default">
           <div class="userprofile social ">
-            <div class="userpic"> <img src="https://bootdey.com/img/Content/avatar/avatar6.png" alt="" class="userpicimg"> </div>
+            <div class="userpic"> <img  style="height: 100%;width: 100%;"src="<?php echo $userimage?>" alt="" class="userpicimg"> </div>
             <h3 class="username"><?php echo $db->FullName($_SESSION['userId']) ?></h3>
            
             <p><?php echo $username ?></p>
@@ -89,7 +89,7 @@ if(isset($_SESSION['userId'])){
               <li>
                 
                         <form action="upload.php?userid=$userid" method="post" enctype="multipart/form-data">
-            change your profile picture:
+            <p style="color: #dc11a2;">change your profile picture:</p>
             <input type="file" name="fileToUpload" id="fileToUpload">
             <input type="submit" value="Upload Image" name="submit">
         </form>
@@ -114,10 +114,13 @@ if(isset($_SESSION['userId'])){
               <h4 class="page-header small " style="position: relative;line-height: 22px; font-weight: 400;
               font-size: 20px;color: #607D8B;margin-left: 10px;">My Pictures</h4>
               <!-- when we know how to store pics in db we will select pics from db -->
-              <div class="col-sm-3 col-xs-3"><img src="images/flower.jpg" class="" alt=""> </div>
-              <div class="col-sm-3 col-xs-3"><img src="images/flower2.jpg" class="" alt=""> </div>
-              <div class="col-sm-3 col-xs-3"><img src="images/flower3.jpg" class="" alt=""> </div>
-              <div class="col-sm-3 col-xs-3"><img src="images/flower4.jpg" class="" alt=""> </div>
+             <?php $myimages=$db->MyImages($userid); 
+             if($myimages){
+             foreach ($myimages as $image):
+             ?>
+              <div class="col-sm-3 col-xs-3 "><img src="<?php echo $image['imageUrl'] ?>" > </div>
+
+             <?php  endforeach;} ?>
             </div>
           </div>
           <div class="clearfix"></div>
@@ -132,12 +135,17 @@ if(isset($_SESSION['userId'])){
           <div class="col-md-12">
             <div class="memberblock">
               <?php 
+              
               $friends=$db->my_friends($userid);
-              foreach($friends as $Friend):?>
-             <a href="" class="member"> <img src="https://bootdey.com/img/Content/avatar/avatar2.png" alt="">
+              if($friends):
+              foreach($friends as $Friend):
+             $friendimage=$db->GetImage($Friend['userId']);?>
+
+             <a href="" class="member"> <img height="65px"src="<?php echo $friendimage ?>"  onerror="this.src='uploads/user-icon.png';">
               <div class="memmbername"><?php echo $Friend['firstName']." ".$Friend['lastName']; ?></div>
               </a>
               <?php endforeach; ?>
+             <?php endif?>
                 </div>
           </div>
           <div class="clearfix"></div>
@@ -147,12 +155,14 @@ if(isset($_SESSION['userId'])){
         <div class="panel panel-default">
           <div class="panel-body">
             <div class="status-upload nopaddingbtm">
-              <form action="post.php?page=profile.php" method="post">
+              <form action="post.php?page=profile.php" method="post" enctype="multipart/form-data">
                 <input type="textarea" class="form-control" name="post"  placeholder="What are you doing right now?">
                 <br>
                 <ul class="nav nav-pills pull-left ">
                  
-                  <li><a style="color: #de41b0;"title="" data-toggle="tooltip" data-placement="bottom" data-original-title="Picture"><i class="glyphicon glyphicon-picture"></i></a></li>
+                  <li><span style="color: #de41b0;">
+                   <input  type="file" name="fileToUpload" id="fileToUpload" value="choose image" class="btn  pull-right" >
+                </span></li>
                 </ul>
                 <input type="submit" name="share" value="Share" style="background-color:  #de41b0;border-color:#de41b0;"type="submit" class="btn btn-success pull-right">
               </form>
@@ -167,18 +177,20 @@ $posts=$db->my_posts($userid);
  
  if($posts)
   foreach($posts as  $row):
-    $postId=$row['postId'];?>
+    $postId=$row['postId'];
+    $userimage=$db->GetImage($row['userId']);
+    $postimage=$db->GetPostImage($postId);?>
         <div id="<?php echo $postId ; ?>" class="panel panel-default post-panel">
           <div class="btn-group pull-right postbtn">
             <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
             <ul class="dropdown-menu pull-right" role="menu">
-              <li><a href="javascript:void(0)">Hide this</a></li>
-              <li><a href="javascript:void(0)">Report</a></li>
+              <li><a href="edit_post.php?postId=<?php echo $postId;?>"  style="cursor:pointer;" class="edit_post">Edit Post</a></li>
+              <li><a style="cursor:pointer;" class="delete_post" >Delete Post</a></li>
             </ul>
           </div>
           <div class="col-md-12">
             <div class="media">
-              <div class="media-left"> <a href="javascript:void(0)"> <img src="https://bootdey.com/img/Content/avatar/avatar1.png" alt="" class="media-object"> </a> </div>
+              <div class="media-left"> <a href="javascript:void(0)"> <img  style="height: 50px;width: 50px;"src="<?php echo $userimage?>" alt="" class="media-object"> </a> </div>
               <div class="media-body">
                 <?php 
                 $name=$db->FullName($row['userId']);
@@ -186,6 +198,10 @@ $posts=$db->my_posts($userid);
                 <h4 class="media-heading"> <?php echo $name ; ?> <br>
                   <small><i class="fa fa-clock-o"></i> <?php echo $row['dateTimeCurrent']; ?> </small> </h4>
                 <p><?php echo $row['postText']; ?> </p>
+                <div><img src="<?php echo $postimage?>"    style="
+                  padding: 5px;
+                  width: 50% !important ;margin-left: auto;
+                   margin-right: auto; display: block;" ></div>
                 <?php  
                 
 
@@ -244,68 +260,8 @@ $posts=$db->my_posts($userid);
 </div>
 </div>
 </div>
-<script type="text/javascript">
 
-function add_like(postId)
-{
-    jQuery.ajax({
-        type: "GET",
-        url: "like.php?postid="+postId,
-        success: function(data1) {
-          var response = $.parseJSON(data1);
-            console.log(data1);
-           $("#"+postId+ " .num-likes").html(response.no_likes);
-           $("#"+postId+ " .like_color").css("color",response.color);
-         }
-    });
-}
-
-function add_comment(postId)
-{
-    jQuery.ajax({
-        type: "POST",
-        url: "comment.php?postId="+postId,
-        data: jQuery("#"+postId+" .add-comment-form").serialize(),
-         success:function(data) {
-          var response = $.parseJSON(data);
-          var Ncomments=response.no_comments; 
-          $("#"+postId+ " .num-comments").html(Ncomments);
-          $("#"+postId+" .comments-area").prepend(response.comment_html);
-         //console.log("successed"+Ncomments+"#form"+postId); 
-         }
-    });
-}
-$(document).ready(function() {
-
-    $(".LIKES").click(function() {
-    
-      var postId=$(this).parents(".post-panel").attr('id');
-       add_like(postId); 
-
-      
-       });
-
-       $(".COMMENTS").click(function() {
-          //var postId = $(this).parents("ul").find('.LIKES').attr('id');
-          var postId = $(this).parents(".post-panel").attr('id');
-          $("#" + postId+" .comments-area").fadeIn();
-          //console.log("comment added "+($(this).attr('id')));
-           
-     });
-
-    $(".commentbtn").click(function() {
-      var postId=$(this).parents(".post-panel").attr('id');
-      //console.log("comment button clicked on post id " + postId);
-      add_comment(postId); 
-      //console.log("comment added");
-      $("#"+postId+ " .add-comment-form textarea").val('');
-
-      return false;
-     
-       });   
- 
-});
-
+  <script src="js/main.js">
 
   </script>
 </body>

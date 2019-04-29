@@ -2,7 +2,6 @@
 session_start();
 require('conn.php');
  $page=$_GET['page'];
-
 			
 			$target_dir = "uploads/";
 			$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
@@ -39,11 +38,9 @@ require('conn.php');
 			if ($uploadOk == 0) {
 			 echo "Sorry, your file was not uploaded.";
 			 //if everything is ok, try to upload file
-
 						} else {
 			    if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
 			        echo "The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded.";
-
 			    } else {
 			        echo "Sorry, there was an error uploading your file.";
 			    }
@@ -62,12 +59,10 @@ require('conn.php');
 			if($uploadOk == 1)
 		  $query = "INSERT INTO posts (userid,postText,dateTimeCurrent,imageUrl)VALUES ($userId,'$post',curTime(),
 			  '$target_file')";
-
 		else 
 			$query = "INSERT INTO posts (userid,postText,dateTimeCurrent)VALUES ($userId,'$post',curTime())";
 		}
 		    if ($db->InsertData($query))
 		      header("location:".$page);
 		  
-
  ?>
