@@ -4,7 +4,7 @@ require('conn.php');
  $page=$_GET['page'];
  $connection=$db->conn;
  $post=htmlentities($connection->real_escape_string($_POST['post']));	
- if(isset($_FILES["fileToUpload"]["name"]) && $post !="")	
+ if(isset($_FILES["fileToUpload"]["name"]) or $post !="")	
  {
 			$target_dir = "uploads/";
 			$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
