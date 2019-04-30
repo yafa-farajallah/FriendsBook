@@ -6,9 +6,9 @@
               url: "like.php?postid="+postId,
               success: function(data1) {
                 var response = $.parseJSON(data1);
-                console.log(data1);
                 $("#"+postId+ " .num-likes").html(response.no_likes);
                 $("#"+postId+ " .like_color").css("color",response.color);
+                
               }
           });
       }
@@ -54,6 +54,7 @@
               url: "addfriends.php?friendid="+friendId,
               success:function(friend) {
               $("#"+friendId).html("Request Send");
+              $("#"+friendId).css("background-color",'#eb8dd0');
                 load_unseen_notification();
               }
           });
