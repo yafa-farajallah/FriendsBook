@@ -1,7 +1,11 @@
 <?php
 session_start();
 require('conn.php');
- $page=$_GET['page'];		
+ $page=$_GET['page'];
+ $connection=$db->conn;
+ $post=htmlentities($connection->real_escape_string($_POST['post']));	
+ if(isset($_FILES["fileToUpload"]["name"]) && $post !="")	
+ {
 			$target_dir = "uploads/";
 			$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
 			$uploadOk = 1;
@@ -45,8 +49,8 @@ require('conn.php');
 			    }
 			}
 		
-		$connection=$db->conn;
-		$post=htmlentities($connection->real_escape_string($_POST['post']));
+		
+		
 		$userId=$_SESSION['userId'];
 		if(isset($_GET['postId']))
 		{
@@ -64,5 +68,6 @@ require('conn.php');
 		    if ($db->InsertData($query))
 			  header("location:".$page);
 			  
-		  
+	}
+	else 	  header("location:".$page); 
  ?>
