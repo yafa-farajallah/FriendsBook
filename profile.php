@@ -82,10 +82,10 @@ $userimage=$db->GetImage($userid);
             <h3 class="username"><?php echo $db->FullName($userid) ?></h3>
            
             <p><?php echo $username ?></p>
-            <div class="socials tex-center"> <a href="" class="btn btn-circle btn-primary ">
-            <i class="fa fa-facebook"></i></a> <a href="" class="btn btn-circle btn-danger ">
-            <i class="fa fa-google-plus"></i></a> <a href="" class="btn btn-circle btn-info ">
-            <i class="fa fa-twitter"></i></a> <a href="" class="btn btn-circle btn-warning "><i class="fa fa-envelope"></i></a>
+            <div class="socials tex-center"> <a href="https://www.facebook.com/" class="btn btn-circle btn-primary ">
+            <i class="fa fa-facebook"></i></a> <a href="https://aboutme.google.com/u/0/?referer=gplus" class="btn btn-circle btn-danger ">
+            <i class="fa fa-google-plus"></i></a> <a href="https://twitter.com/login" class="btn btn-circle btn-info ">
+            <i class="fa fa-twitter"></i></a> 
             </div>
           </div>
           <div class="col-md-12 border-top border-bottom">
