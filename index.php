@@ -66,7 +66,6 @@ if(isset($_SESSION['userId'])){
   $userid=$_SESSION['userId'];
   $name=$db->FullName($userid);
   $userimage=$db->GetImage($userid);
-
 ?>
 <!DOCTYPE html>
 <html>
@@ -247,8 +246,8 @@ $posts=$db->my_friends_posts($userid);
             ?>
                 
             <div style="margin-bottom: 10px;margin-top: 3px;margin-left: 10px;" 
-            class="clearfix"> <b style="color: black;  font-family: Times New Roman;">
-              <?php echo $db->FullName($notfriendId); ?> </b>
+            class="clearfix"> <b><a href="friends_profile.php?friendId=<?php echo $notfriendId;?>" style="color: black;  font-family: Times New Roman;">
+              <?php echo $db->FullName($notfriendId); ?> </a></b>
             <button  id="<?php echo $notfriendId; ?>"
             class="btn btn--radius-2 btn--blue addfriend"  style=" margin-left: 10px;
               margin-right: 10px;
@@ -261,7 +260,6 @@ $posts=$db->my_friends_posts($userid);
                         <?php echo $request_status; ?></span></button></div>
                <?php }endforeach; ?>
         
-
         </div>
         </div>
   
@@ -270,11 +268,9 @@ $posts=$db->my_friends_posts($userid);
 <?php
 ?>
 <script src="js/main.js">
-
   </script>
 </body>
 </html>
-
 <?php
 }
 else{
