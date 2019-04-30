@@ -3,8 +3,11 @@
 <?php
 require('conn.php');
 session_start();
-if(isset($_SESSION['userId'])){
-  $userid=$_SESSION['userId'];
+if(isset($_GET['friendId'])and isset($_SESSION['userId'])){
+  $userid=$_GET['friendId'];
+  $ownerid=$_SESSION['userId'];
+  if($userid==$ownerid)
+  header("location:profile.php");
   $query ="SELECT * FROM userac where userId=$userid";
   $result=$db->SelectData($query);
   $user=mysqli_fetch_array($result);
@@ -20,9 +23,10 @@ if(isset($_SESSION['userId'])){
   $birthdate=$user[9];
   
 $userimage=$db->GetImage($userid);
+$ownerimage=$db->GetImage($ownerid);
 ?>
 <head>
-  <title>My Profile</title>
+  <title><?php echo $db->FullName($userid);?>  Profile</title>
 <link href="css/profile.css" rel="stylesheet">
 <link rel="icon" href="images/caticon.png">
  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -42,8 +46,8 @@ $userimage=$db->GetImage($userid);
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div  class="collapse navbar-collapse navbar-fixed-top pink" id="bs-example-navbar-collapse-1" >
       <ul class="nav navbar-nav ">
-        <li><img style="height: 50px;width: 50px;"  src="<?php echo $userimage?>" onerror="this.src='uploads/user-icon.png';" class="media-object"></li>
-        <li ><a style="color: white; padding-right: 0px;"href="profile.php"><?php echo $firstName." ".$lastName ?></a></li>
+        <li><img style="height: 50px;width: 50px;"  src="<?php echo $ownerimage;?>" onerror="this.src='uploads/user-icon.png';" class="media-object"></li>
+        <li ><a style="color: white; padding-right: 0px;"href="profile.php"><?php echo $db->FullName($ownerid); ?></a></li>
         <li ><a style="color: white;margin-left: 20px;"href="index.php">Home Page</a></li>
         
         
@@ -101,16 +105,6 @@ $userimage=$db->GetImage($userid);
               </li>
               
             </ul>
-            <ul class="nav nav-pills pull-right countlist" role="tablist">
-              <li>
-                
-                        <form action="upload.php?userid=$userid" method="post" enctype="multipart/form-data">
-            <p style="color: #dc11a2;">change your profile picture:</p>
-            <input type="file" name="fileToUpload" id="fileToUpload">
-            <input type="submit" value="Upload Image" name="submit">
-        </form>
-                      </li>
-            </ul>
           </div>
           <div class="clearfix"></div>
         </div>
@@ -128,7 +122,7 @@ $userimage=$db->GetImage($userid);
           <div class="col-md-12 photolist ">
             <div class="row">
               <h4 class="page-header small " style="position: relative;line-height: 22px; font-weight: 400;
-              font-size: 20px;color: #607D8B;margin-left: 10px;">My Pictures</h4>
+              font-size: 20px;color: #607D8B;margin-left: 10px;"><?php echo $db->FullName($userid);?> Pictures</h4>
               <!-- when we know how to store pics in db we will select pics from db -->
              <?php $myimages=$db->MyImages($userid); 
              if($myimages){
@@ -145,8 +139,8 @@ $userimage=$db->GetImage($userid);
        
         <div class="panel panel-default">
           <div class="panel-heading">
-            <h1 class="page-header small">My Friends</h1>
-            <p class="page-subtitle small">You have recently connected with <?php echo $db->count_friends($userid); ?></p>
+            <h1 class="page-header small"><?php echo $db->FullName($userid);?> Friends</h1>
+            <p class="page-subtitle small"><?php echo $db->FullName($userid);?> have recently connected with <?php echo $db->count_friends($userid); ?></p>
           </div>
           <div class="col-md-12">
             <div class="memberblock">
@@ -169,25 +163,6 @@ $userimage=$db->GetImage($userid);
         </div>
       </div>
       <div class="col-md-8 col-sm-12 pull-left posttimeline">
-        <div class="panel panel-default">
-          <div class="panel-body">
-            <div class="status-upload nopaddingbtm">
-              <form action="post.php?page=profile.php" method="post" enctype="multipart/form-data">
-                <input type="textarea" class="form-control" name="post"  placeholder="What are you doing right now?">
-                <br>
-                <ul class="nav nav-pills pull-left ">
-                 
-                  <li><span style="color: #de41b0;">
-                   <input  type="file" name="fileToUpload" id="fileToUpload" value="choose image" class="btn  pull-right" >
-                </span></li>
-                </ul>
-                <input type="submit" name="share" value="Share" style="background-color:  #de41b0;border-color:#de41b0;"type="submit" class="btn btn-success pull-right">
-              </form>
-            </div>
-            <!-- Status Upload  --> 
-          </div>
-        </div>
-        
 
 <?php 
 $posts=$db->my_posts($userid);
@@ -198,16 +173,9 @@ $posts=$db->my_posts($userid);
     $userimage=$db->GetImage($row['userId']);
     $postimage=$db->GetPostImage($postId);?>
         <div id="<?php echo $postId ; ?>" class="panel panel-default post-panel">
-          <div class="btn-group pull-right postbtn">
-            <button type="button" class="dotbtn dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <span class="dots"></span> </button>
-            <ul class="dropdown-menu pull-right" role="menu">
-              <li><a href="edit_post.php?postId=<?php echo $postId;?>"  style="cursor:pointer;" class="edit_post">Edit Post</a></li>
-              <li><a style="cursor:pointer;" class="delete_post" >Delete Post</a></li>
-            </ul>
-          </div>
           <div class="col-md-12">
             <div class="media">
-              <div class="media-left"> <a href="javascript:void(0)"> <img  style="height: 50px;width: 50px;" src="<?php echo $userimage?>" onerror="this.src='uploads/user-icon.png';" class="media-object"> </a> </div>
+              <div class="media-left"> <a href="javascript:void(0)"> <img  style="height: 50px;width: 50px;" onerror="this.src='uploads/user-icon.png';" src="<?php echo $userimage?>" onerror="this.src='uploads/user-icon.png';" class="media-object"> </a> </div>
               <div class="media-body">
                 <?php 
                 $name=$db->FullName($row['userId']);

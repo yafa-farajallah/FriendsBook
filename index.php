@@ -247,8 +247,8 @@ $posts=$db->my_friends_posts($userid);
             ?>
                 
             <div style="margin-bottom: 10px;margin-top: 3px;margin-left: 10px;" 
-            class="clearfix"> <b style="color: black;  font-family: Times New Roman;">
-              <?php echo $db->FullName($notfriendId); ?> </b>
+            class="clearfix"> <b><a href="friends_profile.php?friendId=<?php echo $notfriendId;?>" style="color: black;  font-family: Times New Roman;">
+              <?php echo $db->FullName($notfriendId); ?> </a></b>
             <button  id="<?php echo $notfriendId; ?>"
             class="btn btn--radius-2 btn--blue addfriend"  style=" margin-left: 10px;
               margin-right: 10px;

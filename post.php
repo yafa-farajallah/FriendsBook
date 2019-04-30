@@ -1,8 +1,7 @@
 <?php
 session_start();
 require('conn.php');
- $page=$_GET['page'];
-			
+ $page=$_GET['page'];		
 			$target_dir = "uploads/";
 			$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
 			$uploadOk = 1;
@@ -63,6 +62,7 @@ require('conn.php');
 			$query = "INSERT INTO posts (userid,postText,dateTimeCurrent)VALUES ($userId,'$post',curTime())";
 		}
 		    if ($db->InsertData($query))
-		      header("location:".$page);
+			  header("location:".$page);
+			  
 		  
  ?>
